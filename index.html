@@ -711,6 +711,7 @@ function renderPremiumCard(num, d) {
 async function sendToSysteme(email) {
   try {
     const payload = {
+      action: 'send_email',
       email,
       niche: userInput.niche || '',
       doelgroep: userInput.doelgroep || '',
@@ -721,12 +722,12 @@ async function sendToSysteme(email) {
       voorna_met: generatedResults?.voorna_met || '',
       voorna_bottom: generatedResults?.voorna_bottom || ''
     };
-    await fetch("https://hook.eu2.make.com/dnl9n48iomi9y8msg34atyfl38s6qn34", {
+    await fetch("/api/claude", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-  } catch(e) { console.error("Make.com:", e); }
+  } catch(e) { console.error("Email fout:", e); }
 }
 </script>
 </body>
