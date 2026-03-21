@@ -221,24 +221,15 @@ export default {
 </table>
 </body></html>`;
 
-          const emailRes = await fetch('https://api.resend.com/emails', {
+          await fetch('https://hook.eu2.make.com/4277r5dhrnvwptaqc2y824brmgwc8xko', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${env.RESEND_API_KEY}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              from: 'Meghan Eckenbach <meghan@e-mand.com>',
-              to: [email],
+              to: email,
               subject: `Jouw 5 PAIP-ideeën voor ${niche || url || 'jouw business'}`,
               html: htmlEmail
             })
           });
-
-          const emailData = await emailRes.json();
-          if (emailData.error) {
-            return new Response(JSON.stringify({ error: emailData.error }), { status: 500, headers: { 'Content-Type': 'application/json' } });
-          }
 
           return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
         }
