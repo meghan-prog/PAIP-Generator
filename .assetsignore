@@ -1,0 +1,13 @@
+node_modules/
+server.js
+worker.js
+package.json
+package-lock.json
+wrangler.toml
+.env
+.env.example
+.gitignore
+.assetsignore
+netlify.toml
+netlify/
+functions/
