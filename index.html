@@ -290,6 +290,9 @@
   <label class="input-label">Grootste probleem van jouw klant <span class="input-optional">optioneel bij URL</span></label>
   <textarea id="input-probleem" class="input-field area" placeholder="bijv. ze weten wat ze willen maar durven de stap niet te zetten..."></textarea>
 
+  <label class="input-label">Jouw e-mailadres <span class="input-optional">voor je gratis rapport</span></label>
+  <input type="email" id="input-email" class="input-field" placeholder="je@email.nl">
+
   <div id="api-error" style="display:none;background:#fdecea;border:1px solid #e57373;border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:14px;color:#b71c1c;line-height:1.5;"></div>
   <button class="btn-primary" onclick="startAnalyse()">Genereer mijn PAIP-ideeën →</button>
   <p class="fine-print">Gratis. Geen verkoopgesprek. Alleen concrete ideeën.</p>
@@ -400,8 +403,7 @@
           <div class="wall-bullet"><span>🔧</span><span>Per idee: hoe je het in 1 dag bouwt</span></div>
           <div class="wall-bullet"><span>🎯</span><span>Welke PAIP ik als eerste zou bouwen - en waarom</span></div>
         </div>
-        <input type="email" id="wall-email" class="wall-input" placeholder="je@email.nl">
-        <button class="btn-wall" onclick="unlockPAIPs()">Ontgrendel mijn 3 premium PAIPs →</button>
+        <button class="btn-wall" onclick="unlockPAIPs()">Stuur mij alle 5 premium PAIPs →</button>
         <p class="wall-fine">Je ontvangt ook tips over PAIPs bouwen. Afmelden kan altijd.</p>
       </div>
     </div>
@@ -461,12 +463,20 @@ function startAnalyse() {
   const niche     = document.getElementById('input-niche').value.trim();
   const doelgroep = document.getElementById('input-doelgroep').value.trim();
   const probleem  = document.getElementById('input-probleem').value.trim();
+  const email     = document.getElementById('input-email').value.trim();
 
   // URL alleen is genoeg, of minimaal niche
   if (!url && !niche) {
     document.getElementById('input-url').focus();
     return;
   }
+
+  if (!email || !email.includes('@')) {
+    document.getElementById('input-email').focus();
+    return;
+  }
+
+  userEmail = email;
 
   const label = url ? url.replace(/^https?:\/\//, '').split('/')[0] : niche.substring(0, 42);
   document.getElementById('domain-label').textContent = label;
@@ -659,9 +669,6 @@ function renderResults(data) {
 }
 
 function unlockPAIPs() {
-  userEmail = document.getElementById('wall-email').value.trim();
-  if (!userEmail || !userEmail.includes('@')) { document.getElementById('wall-email').focus(); return; }
-
   sendToSysteme(userEmail);
   document.getElementById('confirm-email').textContent = userEmail;
 
