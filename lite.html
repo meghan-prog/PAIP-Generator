@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAIP Generator Lite | Meghan Eckenbach</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mahogany: #2e0e02;
+    --pearl: #E9DFD3;
+    --chestnut: #8B271E;
+    --white: #ffffff;
+    --pearl-dark: #c8bdb3;
+    --pearl-light: #f5f0ea;
+    --chestnut-light: rgba(139,39,30,0.10);
+    --chestnut-bg: rgba(139,39,30,0.06);
+    --muted: #8a7a70;
+    --border: #d4c9bb;
+    --max: 480px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--pearl);
+    color: var(--mahogany);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav {
+    width: 100%; max-width: var(--max);
+    padding: 20px 24px;
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-mark {
+    width: 34px; height: 34px; background: var(--mahogany); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px;
+    color: var(--pearl); letter-spacing: 0.02em;
+  }
+
+  .logo-text {
+    font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 15px;
+    letter-spacing: 0.07em; text-transform: uppercase; color: var(--mahogany);
+  }
+  .logo-text span { color: var(--chestnut); }
+
+  .lite-badge {
+    margin-left: auto;
+    background: var(--chestnut-light);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--chestnut);
+  }
+
+  .screen { display: none; width: 100%; max-width: var(--max); padding: 0 24px 80px; animation: fadeUp 0.35s ease; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── SCREEN 1 ── */
+  #screen-hero { padding-top: 36px; }
+
+  .hero-headline {
+    font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 40px;
+    line-height: 1.0; text-transform: uppercase; color: var(--mahogany);
+  }
+  .hero-headline .accent { color: var(--chestnut); display: block; }
+
+  .hero-sub { color: var(--muted); font-size: 15px; line-height: 1.65; margin-top: 14px; margin-bottom: 28px; }
+
+  .input-label { font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--mahogany); margin-bottom: 7px; margin-top: 16px; display: block; }
+  .input-optional { font-weight: 400; color: var(--muted); text-transform: none; letter-spacing: 0; font-size: 11px; margin-left: 6px; }
+
+  .input-field {
+    width: 100%; background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    padding: 15px 16px; color: var(--mahogany); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-field::placeholder { color: var(--pearl-dark); }
+  .input-field:focus { border-color: var(--chestnut); }
+  .input-field.area { resize: none; height: 80px; line-height: 1.55; }
+
+  .url-hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+  .btn-primary {
+    width: 100%; background: var(--mahogany); color: var(--pearl); border: none; border-radius: 12px;
+    padding: 17px; font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 16px;
+    letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
+    transition: background 0.2s, transform 0.1s; margin-top: 20px;
+  }
+  .btn-primary:hover { background: var(--chestnut); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .fine-print { font-size: 11px; color: var(--pearl-dark); text-align: center; margin-top: 10px; line-height: 1.5; }
+
+  #api-error { display:none; background:#fdecea; border:1px solid #e57373; border-radius:10px; padding:14px 16px; margin-bottom:12px; font-size:14px; color:#b71c1c; line-height:1.5; }
+
+  /* ── LOADING ── */
+  #screen-loading { padding-top: 70px; align-items: center; text-align: center; gap: 26px; }
+
+  .domain-pill {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--white);
+    border: 1px solid var(--border); border-radius: 999px; padding: 10px 20px;
+    font-size: 14px; color: var(--mahogany); font-weight: 500; max-width: 90%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--chestnut); flex-shrink: 0; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .spinner-wrap { position: relative; width: 78px; height: 78px; }
+  .spinner-bg { position: absolute; inset: 0; border-radius: 50%; background: var(--chestnut-light); }
+  .spinner { position: absolute; inset: 8px; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--chestnut); border-right-color: var(--chestnut); animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 24px; line-height: 1.25; text-transform: uppercase; color: var(--mahogany); min-height: 65px; transition: opacity 0.3s; padding: 0 10px; }
+
+  .step-dots { display: flex; gap: 7px; justify-content: center; }
+  .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pearl-dark); transition: background 0.3s, width 0.3s; }
+  .step-dot.active { background: var(--chestnut); width: 22px; border-radius: 4px; }
+
+  .progress-wrap { width: 100%; background: var(--white); border-radius: 999px; height: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .progress-bar { height: 100%; background: var(--chestnut); border-radius: 999px; transition: width 0.8s ease; width: 0%; }
+  .progress-pct { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 0.05em; color: var(--muted); margin-top: 5px; }
+
+  /* ── RESULTS ── */
+  #screen-results { padding-top: 36px; }
+
+  .results-headline { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 32px; line-height: 1.05; text-transform: uppercase; color: var(--mahogany); margin-bottom: 8px; }
+  .results-headline .accent { color: var(--chestnut); }
+  .results-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+  /* VOOR/NA BLOK */
+  .voorna-box {
+    background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+    padding: 20px; margin-bottom: 24px;
+  }
+  .voorna-title { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mahogany); margin-bottom: 14px; }
+  .voorna-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .voorna-col-label { font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .voorna-col-label.zonder { color: var(--muted); }
+  .voorna-col-label.met { color: var(--chestnut); }
+  .voorna-col { font-size: 13px; line-height: 1.6; color: var(--muted); }
+  .voorna-col.met { color: var(--mahogany); font-weight: 500; }
+  .voorna-divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .voorna-bottom { font-size: 13px; color: var(--muted); line-height: 1.6; font-style: italic; }
+
+  /* PAIP CARD */
+  .paip-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 14px; overflow: hidden; }
+  .paip-card.featured { border-color: var(--chestnut); background: linear-gradient(160deg, #fdf6f0, var(--white)); }
+
+  .card-header { padding: 11px 18px; border-bottom: 1px solid var(--border); background: var(--chestnut-light); }
+  .badge-best { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--chestnut); }
+
+  .card-body { padding: 18px; }
+  .card-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 11px; }
+
+  .card-num { width: 26px; height: 26px; background: var(--chestnut); color: var(--white); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .card-num.alt { background: var(--chestnut-light); color: var(--mahogany); }
+
+  .type-pill { background: var(--pearl-light); border: 1px solid var(--border); border-radius: 999px; padding: 3px 11px; font-size: 12px; color: var(--mahogany); }
+  .time-pill { font-size: 12px; color: var(--muted); margin-left: auto; white-space: nowrap; }
+
+  .card-title { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 18px; text-transform: uppercase; letter-spacing: 0.01em; margin-bottom: 7px; color: var(--mahogany); }
+  .card-desc { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+
+  .waarom-box {
+    background: var(--chestnut-bg); border-left: 3px solid var(--chestnut);
+    border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .waarom-label { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--chestnut); margin-bottom: 6px; }
+  .waarom-text { font-size: 13px; color: var(--mahogany); line-height: 1.65; }
+
+  .price-row { display: flex; align-items: center; gap: 10px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .price-label { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--pearl-dark); font-family: 'Oswald', sans-serif; }
+  .price-value { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 22px; color: var(--chestnut); }
+  .price-note { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+  .email-info {
+    background: var(--chestnut-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .email-info strong { color: var(--mahogany); }
+
+  .btn-restart {
+    width: 100%; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px; font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 14px;
+    letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s; margin-top: 8px;
+  }
+  .btn-restart:hover { border-color: var(--chestnut); color: var(--chestnut); }
+
+  .footer { width: 100%; max-width: var(--max); text-align: center; padding: 16px 24px; font-size: 12px; color: var(--pearl-dark); border-top: 1px solid var(--border); font-family: 'Oswald', sans-serif; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo-mark">ME</div>
+  <div class="logo-text">Meghan <span>Eckenbach</span></div>
+  <div class="lite-badge">Lite</div>
+</nav>
+
+<!-- ── SCREEN 1 ── -->
+<div id="screen-hero" class="screen active">
+  <h1 class="hero-headline" style="padding-top:36px">
+    Welke gratis PAIP<br>kun jij
+    <span class="accent">weggeven?</span>
+  </h1>
+  <p class="hero-sub">Beantwoord 3 vragen. In 60 seconden zie je welke AI-producten jij kunt bouwen - én voor hoeveel je ze verkoopt.</p>
+
+  <label class="input-label">Jouw website</label>
+  <input type="text" id="input-url" class="input-field" placeholder="bijv. jouwcoaching.nl">
+  <p class="url-hint">Geen website? Geen probleem - vul de vragen hieronder in.</p>
+
+  <label class="input-label">Wat doe jij? <span class="input-optional">optioneel bij URL</span></label>
+  <input type="text" id="input-niche" class="input-field" placeholder="bijv. life coach voor vrouwen in de veertig">
+
+  <label class="input-label">Wie is jouw ideale klant? <span class="input-optional">optioneel bij URL</span></label>
+  <input type="text" id="input-doelgroep" class="input-field" placeholder="bijv. vrouwelijke ondernemers die willen opschalen">
+
+  <label class="input-label">Grootste probleem van jouw klant <span class="input-optional">optioneel bij URL</span></label>
+  <textarea id="input-probleem" class="input-field area" placeholder="bijv. ze weten wat ze willen maar durven de stap niet te zetten..."></textarea>
+
+  <label class="input-label">Jouw e-mailadres</label>
+  <input type="email" id="input-email" class="input-field" placeholder="je@email.nl">
+
+  <div id="api-error"></div>
+  <button class="btn-primary" onclick="startAnalyse()">Genereer mijn PAIP-ideeën →</button>
+  <p class="fine-print">Lite versie · Alle 5 PAIPs direct zichtbaar</p>
+</div>
+
+<!-- ── LOADING ── -->
+<div id="screen-loading" class="screen">
+  <div style="height:10px"></div>
+  <div class="domain-pill"><div class="dot"></div><span id="domain-label">analyseren...</span></div>
+  <div class="spinner-wrap"><div class="spinner-bg"></div><div class="spinner"></div></div>
+  <div class="loading-text" id="loading-text">We analyseren jouw niche...</div>
+  <div class="step-dots" id="step-dots"></div>
+  <div style="width:100%">
+    <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="progress-pct" id="progress-pct">0%</div>
+  </div>
+</div>
+
+<!-- ── RESULTS ── -->
+<div id="screen-results" class="screen">
+  <h2 class="results-headline">Jouw <span class="accent">5 PAIPs</span> zijn klaar</h2>
+  <p class="results-sub" id="results-sub">Geen generieke tips. Gebouwd op wat jij doet, voor wie jij werkt.</p>
+
+  <div class="email-info" id="email-info"></div>
+
+  <!-- VOOR/NA -->
+  <div class="voorna-box" id="voorna-box" style="display:none">
+    <div class="voorna-title">Jouw situatie in perspectief</div>
+    <div class="voorna-grid">
+      <div>
+        <div class="voorna-col-label zonder">Zonder PAIP</div>
+        <div class="voorna-col" id="voorna-zonder"></div>
+      </div>
+      <div>
+        <div class="voorna-col-label met">Met PAIP</div>
+        <div class="voorna-col met" id="voorna-met"></div>
+      </div>
+    </div>
+    <div class="voorna-divider"></div>
+    <div class="voorna-bottom" id="voorna-bottom"></div>
+  </div>
+
+  <!-- ALL 5 PAIP CARDS rendered by JS -->
+  <div id="cards-container"></div>
+
+  <button class="btn-restart" onclick="restart()">← Nieuwe analyse starten</button>
+</div>
+
+<div class="footer">Meghan Eckenbach · PAIP Generator Lite</div>
+
+<script>
+const loadingSteps = [
+  "We halen je website op...",
+  "We analyseren jouw niche en doelgroep...",
+  "We bedenken PAIPs die écht waarde toevoegen...",
+  "We berekenen wat je ervoor kunt vragen...",
+  "We schrijven de 'waarom het werkt' uitleg...",
+  "We finaliseren jouw top 5...",
+];
+const stepProgress = [10, 25, 44, 60, 78, 90];
+
+let generatedResults = null;
+let loadingDone = false;
+let apiDone = false;
+let userEmail = '';
+let userInput = {};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function restart() {
+  loadingDone = false;
+  apiDone = false;
+  generatedResults = null;
+  showScreen('screen-hero');
+}
+
+function startAnalyse() {
+  const url       = document.getElementById('input-url').value.trim();
+  const niche     = document.getElementById('input-niche').value.trim();
+  const doelgroep = document.getElementById('input-doelgroep').value.trim();
+  const probleem  = document.getElementById('input-probleem').value.trim();
+  const email     = document.getElementById('input-email').value.trim();
+
+  const errEl = document.getElementById('api-error');
+  errEl.style.display = 'none';
+
+  if (!url && !niche) {
+    document.getElementById('input-url').focus();
+    return;
+  }
+
+  if (!email || !email.includes('@')) {
+    document.getElementById('input-email').focus();
+    return;
+  }
+
+  userEmail = email;
+  userInput = { url, niche, doelgroep, probleem };
+
+  const label = url ? url.replace(/^https?:\/\//, '').split('/')[0] : niche.substring(0, 42);
+  document.getElementById('domain-label').textContent = label;
+
+  if (!url) loadingSteps[0] = "We analyseren jouw niche...";
+
+  showScreen('screen-loading');
+  runLoadingSequence();
+  generatePAIPs(niche, doelgroep, probleem, url);
+}
+
+function buildDots(active) {
+  const c = document.getElementById('step-dots');
+  c.innerHTML = '';
+  loadingSteps.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i === active ? ' active' : '');
+    c.appendChild(d);
+  });
+}
+
+function runLoadingSequence() {
+  let step = 0;
+  buildDots(0);
+  document.getElementById('loading-text').textContent = loadingSteps[0];
+  document.getElementById('progress-bar').style.width = stepProgress[0] + '%';
+  document.getElementById('progress-pct').textContent = stepProgress[0] + '%';
+
+  const iv = setInterval(() => {
+    step++;
+    if (step >= loadingSteps.length) { clearInterval(iv); loadingDone = true; checkReady(); return; }
+    const el = document.getElementById('loading-text');
+    el.style.opacity = '0';
+    setTimeout(() => { el.textContent = loadingSteps[step]; el.style.opacity = '1'; }, 300);
+    buildDots(step);
+    document.getElementById('progress-bar').style.width = stepProgress[step] + '%';
+    document.getElementById('progress-pct').textContent = stepProgress[step] + '%';
+  }, 1800);
+}
+
+function checkReady() { if (loadingDone && apiDone) finishProgress(); }
+
+async function fetchWebsite(url) {
+  try {
+    const res = await fetch("/api/claude", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "fetch_website", url })
+    });
+    const data = await res.json();
+    return data.text || '';
+  } catch(e) { return ''; }
+}
+
+async function generatePAIPs(niche, doelgroep, probleem, url) {
+  let websiteContext = '';
+  if (url) websiteContext = await fetchWebsite(url);
+
+  const websitePart = websiteContext
+    ? `\n\nWEBSITE CONTENT (gebruik dit als extra context):\n${websiteContext}`
+    : '';
+
+  const prompt = `Je bent een expert in het bedenken van PAIP's (Personalized Automated Intelligent Products) voor coaches, consultants en creators.
+
+Een PAIP is een gepersonaliseerd AI-product waarbij de gebruiker een formulier invult en een uniek op maat gemaakt resultaat terugkrijgt. PAIPs kunnen vele vormen aannemen:
+- 🔍 Scanner / Diagnose
+- 🤖 Bot / AI Assistent
+- 🧮 Calculator / Scorekaart
+- 🗺️ Stappenplan / Routekaart
+- 📊 Audit / Rapport
+- 💬 Tekst Generator
+- 🎯 Matcher
+- 📅 Planner
+- 🧠 Quiz / Profiler
+- ⚡ Specifieke Tool
+
+INPUT:
+- Niche/rol: ${niche}
+- Doelgroep: ${doelgroep}
+- Grootste klantprobleem: ${probleem}${websitePart}
+
+Genereer 5 PAIP-ideeën die ÉCHT passen bij deze niche. Varieer in vorm. De eerste 2 zijn toegankelijk (gratis of lage prijs). De laatste 3 zijn premium.
+
+Per PAIP geef je ook een "waarom het werkt" uitleg van 2-3 zinnen die specifiek ingaat op de psychologie of het mechanisme achter dit idee voor DEZE doelgroep.
+
+Reageer ALLEEN met geldig JSON (geen markdown, geen uitleg, geen backticks):
+{
+  "voorna_zonder": "3 korte punten zonder PAIP, specifiek voor deze niche",
+  "voorna_met": "3 korte punten met PAIP, specifiek voor deze niche",
+  "voorna_bottom": "1 zin over de concurrentiepositie in deze niche",
+  "paips": [
+    {
+      "type": "emoji + vorm (max 3 woorden)",
+      "titel": "pakkende naam specifiek voor deze niche (max 8 woorden)",
+      "beschrijving": "2 concrete zinnen: wat vult de gebruiker in, wat krijgt ze precies terug.",
+      "waarom": "2-3 zinnen waarom dit specifiek werkt voor deze doelgroep.",
+      "bouwtijd": "1 dag",
+      "prijs": "Gratis",
+      "model": "lead magnet"
+    },
+    {
+      "type": "emoji + vorm",
+      "titel": "naam",
+      "beschrijving": "2 zinnen",
+      "waarom": "2-3 zinnen",
+      "bouwtijd": "1 dag",
+      "prijs": "€47",
+      "model": "betaald product"
+    },
+    {
+      "type": "emoji + vorm",
+      "titel": "naam",
+      "beschrijving": "2 zinnen",
+      "waarom": "2-3 zinnen",
+      "bouwtijd": "2 dagen",
+      "prijs": "€97",
+      "model": "betaald product"
+    },
+    {
+      "type": "emoji + vorm",
+      "titel": "naam",
+      "beschrijving": "2 zinnen",
+      "waarom": "2-3 zinnen",
+      "bouwtijd": "2 dagen",
+      "prijs": "€197",
+      "model": "premium"
+    },
+    {
+      "type": "emoji + vorm",
+      "titel": "naam",
+      "beschrijving": "2 zinnen",
+      "waarom": "2-3 zinnen",
+      "bouwtijd": "3 dagen",
+      "prijs": "€497",
+      "model": "hoog ticket"
+    }
+  ]
+}`;
+
+  try {
+    const res = await fetch("/api/claude", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "generate", prompt })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    generatedResults = JSON.parse(data.text.replace(/```json|```/g, "").trim());
+  } catch(e) {
+    console.error("API error:", e);
+    showScreen('screen-hero');
+    const errEl = document.getElementById('api-error');
+    errEl.textContent = 'Er ging iets mis: ' + e.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  apiDone = true;
+  checkReady();
+}
+
+function finishProgress() {
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('progress-pct').textContent = '100%';
+  const el = document.getElementById('loading-text');
+  el.style.opacity = '0';
+  setTimeout(() => { el.textContent = "Jouw PAIPs zijn klaar!"; el.style.opacity = '1'; }, 300);
+  setTimeout(() => { renderResults(generatedResults); showScreen('screen-results'); }, 1200);
+}
+
+function renderResults(data) {
+  const niche = userInput.niche || userInput.url || 'jouw business';
+  document.getElementById('results-sub').textContent =
+    `Voor: ${niche}${userInput.doelgroep ? ' · ' + userInput.doelgroep : ''}`;
+
+  document.getElementById('email-info').innerHTML =
+    `Ingevuld e-mailadres: <strong>${userEmail}</strong>`;
+
+  // Voor/na blok
+  if (data.voorna_zonder || data.voorna_met) {
+    document.getElementById('voorna-zonder').innerHTML =
+      (data.voorna_zonder || '').replace(/\n/g, '<br>');
+    document.getElementById('voorna-met').innerHTML =
+      (data.voorna_met || '').replace(/\n/g, '<br>');
+    document.getElementById('voorna-bottom').textContent = data.voorna_bottom || '';
+    document.getElementById('voorna-box').style.display = 'block';
+  }
+
+  // Alle 5 kaarten
+  const container = document.getElementById('cards-container');
+  container.innerHTML = data.paips.map((p, i) => renderCard(i, p)).join('');
+}
+
+function renderCard(i, p) {
+  const featured = i >= 2;
+  const numClass = featured ? 'card-num' : (i === 0 ? 'card-num' : 'card-num alt');
+  const badge = i === 0 ? '✦ Beste idee ✦' : (featured ? '⭐ Premium' : null);
+
+  const header = badge
+    ? `<div class="card-header"><span class="badge-best">${badge}</span></div>`
+    : '';
+
+  return `<div class="paip-card${featured ? ' featured' : ''}">
+    ${header}
+    <div class="card-body">
+      <div class="card-meta">
+        <div class="${numClass}">${i + 1}</div>
+        <span class="type-pill">${p.type}</span>
+        <span class="time-pill">⏱ ${p.bouwtijd}</span>
+      </div>
+      <div class="card-title">${p.titel}</div>
+      <div class="card-desc">${p.beschrijving}</div>
+      <div class="waarom-box">
+        <div class="waarom-label">Waarom dit werkt</div>
+        <div class="waarom-text">${p.waarom}</div>
+      </div>
+      <div class="price-row">
+        <span class="price-label">Verkoopprijs</span>
+        <span class="price-value">${p.prijs}</span>
+        <span class="price-note">${p.model}</span>
+      </div>
+    </div>
+  </div>`;
+}
+</script>
+</body>
+</html>
