@@ -446,6 +446,7 @@ let generatedResults = null;
 let loadingDone = false;
 let apiDone = false;
 let userEmail = '';
+let userInput = {};
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -476,6 +477,7 @@ function startAnalyse() {
   }
 
   userEmail = email;
+  userInput = { url, niche, doelgroep, probleem };
 
   const label = url ? url.replace(/^https?:\/\//, '').split('/')[0] : niche.substring(0, 42);
   document.getElementById('domain-label').textContent = label;
@@ -708,10 +710,21 @@ function renderPremiumCard(num, d) {
 
 async function sendToSysteme(email) {
   try {
+    const payload = {
+      email,
+      niche: userInput.niche || '',
+      doelgroep: userInput.doelgroep || '',
+      probleem: userInput.probleem || '',
+      url: userInput.url || '',
+      paips: generatedResults?.paips || [],
+      voorna_zonder: generatedResults?.voorna_zonder || '',
+      voorna_met: generatedResults?.voorna_met || '',
+      voorna_bottom: generatedResults?.voorna_bottom || ''
+    };
     await fetch("https://hook.eu2.make.com/dnl9n48iomi9y8msg34atyfl38s6qn34", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
+      body: JSON.stringify(payload)
     });
   } catch(e) { console.error("Make.com:", e); }
 }
