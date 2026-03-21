@@ -65,6 +65,34 @@ export default {
           });
         }
 
+        if (body.action === 'subscribe') {
+          const email = body.email;
+          if (!email) return new Response('Missing email', { status: 400 });
+
+          // Find tag ID by name
+          const tagsRes = await fetch('https://api.systeme.io/api/tags?limit=100', {
+            headers: { 'X-API-Key': env.SYSTEME_API_KEY }
+          });
+          const tagsData = await tagsRes.json();
+          const tag = tagsData.items?.find(t => t.name === 'PAIP Generator');
+
+          const contactBody = { email };
+          if (tag) contactBody.tags = [{ id: tag.id }];
+
+          await fetch('https://api.systeme.io/api/contacts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': env.SYSTEME_API_KEY
+            },
+            body: JSON.stringify(contactBody)
+          });
+
+          return new Response(JSON.stringify({ ok: true }), {
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
         return new Response('Unknown action', { status: 400 });
 
       } catch (e) {

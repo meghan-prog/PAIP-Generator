@@ -431,8 +431,6 @@
 <div class="footer">Meghan Eckenbach · PAIP Generator</div>
 
 <script>
-const SYSTEME_API_KEY = "JOUW_API_KEY";
-const SYSTEME_TAG_ID  = 0;
 
 const loadingSteps = [
   "We halen je website op...",
@@ -709,14 +707,11 @@ function renderPremiumCard(num, d) {
 }
 
 async function sendToSysteme(email) {
-  if (SYSTEME_API_KEY === "JOUW_API_KEY") return;
   try {
-    const body = { email };
-    if (SYSTEME_TAG_ID > 0) body.tagIds = [SYSTEME_TAG_ID];
-    await fetch("https://api.systeme.io/api/contacts", {
+    await fetch("/api/claude", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-API-Key": SYSTEME_API_KEY },
-      body: JSON.stringify(body)
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "subscribe", email })
     });
   } catch(e) { console.error("Systeme.io:", e); }
 }
