@@ -79,7 +79,7 @@ export default {
           const contactBody = { email };
           if (tag) contactBody.tags = [{ id: tag.id }];
 
-          await fetch('https://api.systeme.io/api/contacts', {
+          const contactRes = await fetch('https://api.systeme.io/api/contacts', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -88,7 +88,9 @@ export default {
             body: JSON.stringify(contactBody)
           });
 
-          return new Response(JSON.stringify({ ok: true }), {
+          const contactData = await contactRes.json();
+
+          return new Response(JSON.stringify({ ok: true, status: contactRes.status, tag, contactData }), {
             headers: { 'Content-Type': 'application/json' }
           });
         }
