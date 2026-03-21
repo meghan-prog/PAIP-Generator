@@ -221,11 +221,11 @@ export default {
 </table>
 </body></html>`;
 
-          await fetch('https://hook.eu2.make.com/4277r5dhrnvwptaqc2y824brmgwc8xko', {
+          await fetch('https://hook.eu2.make.com/dnl9n48iomi9y8msg34atyfl38s6qn34', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              to: email,
+              email,
               subject: `Jouw 5 PAIP-ideeën voor ${niche || url || 'jouw business'}`,
               html: htmlEmail
             })
