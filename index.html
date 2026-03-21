@@ -708,12 +708,12 @@ function renderPremiumCard(num, d) {
 
 async function sendToSysteme(email) {
   try {
-    await fetch("/api/claude", {
+    await fetch("https://hook.eu2.make.com/dnl9n48iomi9y8msg34atyfl38s6qn34", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "subscribe", email })
+      body: JSON.stringify({ email })
     });
-  } catch(e) { console.error("Systeme.io:", e); }
+  } catch(e) { console.error("Make.com:", e); }
 }
 </script>
 </body>
