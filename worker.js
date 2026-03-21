@@ -226,6 +226,14 @@ export default {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email,
+              niche,
+              doelgroep,
+              probleem,
+              url,
+              paips,
+              voorna_zonder,
+              voorna_met,
+              voorna_bottom,
               subject: `Jouw 5 PAIP-ideeën voor ${niche || url || 'jouw business'}`,
               html: htmlEmail
             })
