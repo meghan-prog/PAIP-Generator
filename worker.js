@@ -117,7 +117,7 @@ export default {
               'Authorization': `Bearer ${env.RESEND_API_KEY}`
             },
             body: JSON.stringify({
-              from: 'PAIP Generator <paip@meghaneckenbach.com>',
+              from: 'Meghan Eckenbach <meghan@e-mand.com>',
               to: [email],
               subject: `Jouw 5 PAIP-ideeën voor ${niche || url || 'jouw business'}`,
               html: htmlEmail
