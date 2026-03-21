@@ -290,6 +290,7 @@
   <label class="input-label">Grootste probleem van jouw klant <span class="input-optional">optioneel bij URL</span></label>
   <textarea id="input-probleem" class="input-field area" placeholder="bijv. ze weten wat ze willen maar durven de stap niet te zetten..."></textarea>
 
+  <div id="api-error" style="display:none;background:#fdecea;border:1px solid #e57373;border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:14px;color:#b71c1c;line-height:1.5;"></div>
   <button class="btn-primary" onclick="startAnalyse()">Genereer mijn PAIP-ideeën →</button>
   <p class="fine-print">Gratis. Geen verkoopgesprek. Alleen concrete ideeën.</p>
 </div>
@@ -618,18 +619,11 @@ Reageer ALLEEN met geldig JSON (geen markdown, geen uitleg, geen backticks):
     generatedResults = JSON.parse(text.replace(/```json|```/g, "").trim());
   } catch(e) {
     console.error("API error:", e);
-    generatedResults = {
-      voorna_zonder: "Koude bezoekers. Lange salescyclus. Concurreren op prijs.",
-      voorna_met: "Warme leads die je al kennen. Kortere salescyclus. Klanten kiezen jou.",
-      voorna_bottom: "De meeste coaches in jouw markt werken nog met brochures en koude outreach. Een werkende PAIP trekt klanten aan in plaats van ze te achtervolgen.",
-      paips: [
-        { type: "🔍 Diagnose Tool", titel: "Persoonlijke Blokkade Scanner", beschrijving: "De gebruiker vult in waar ze vastloopt en wat ze al heeft geprobeerd. Ze krijgt een gepersonaliseerde analyse van haar 3 diepste patronen plus directe eerste stappen.", waarom: "Mensen nemen sneller actie als hun probleem concreet en zichtbaar wordt. Door de blokkade te benoemen in hun eigen taal bouw je direct vertrouwen op.", bouwtijd: "1 dag", prijs: "Gratis", model: "lead magnet" },
-        { type: "🧮 Scorekaart", titel: "Gereedheid Check op Maat", beschrijving: "De gebruiker beantwoordt 10 vragen over haar situatie. Ze krijgt een persoonlijke score plus uitleg van haar sterkste en zwakste punten.", waarom: "Een score maakt abstracte twijfel concreet. Zodra iemand een getal ziet is de drempel om contact op te nemen een stuk lager.", bouwtijd: "1 dag", prijs: "€47", model: "betaald product" },
-        { type: "🗺️ Routekaart", titel: "90-Dagen Actieplan Generator", beschrijving: "De gebruiker beschrijft haar doel en huidige situatie. Ze krijgt een stapsgewijs 90-dagenplan terug op maat.", waarom: "Een concreet plan verlaagt de angst voor de eerste stap. De gebruiker ziet direct dat haar situatie oplosbaar is.", bouwtijd: "2 dagen", prijs: "€97", model: "betaald product" },
-        { type: "🤖 AI Assistent", titel: "Persoonlijke Strategie Bot", beschrijving: "De gebruiker vult haar context in. Ze krijgt toegang tot een AI-assistent die reageert als een persoonlijke coach op haar specifieke situatie.", waarom: "Een bot die in de taal en context van de gebruiker antwoordt voelt als een persoonlijk gesprek. Dit bouwt vertrouwen op schaal.", bouwtijd: "2 dagen", prijs: "€197", model: "premium" },
-        { type: "📊 Diepte Audit", titel: "Volledige Business Doorlichting", beschrijving: "De gebruiker doorloopt een uitgebreide intake. Ze ontvangt een gedetailleerd auditrapport met prioriteiten en een concreet groeiplan.", waarom: "Een audit positioneert jou als expert nog voor het eerste gesprek. De klant komt al overtuigd binnen.", bouwtijd: "3 dagen", prijs: "€497", model: "hoog ticket" }
-      ]
-    };
+    showScreen('screen-home');
+    const errEl = document.getElementById('api-error');
+    errEl.textContent = 'Er ging iets mis: ' + e.message;
+    errEl.style.display = 'block';
+    return;
   }
 
   apiDone = true;
