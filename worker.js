@@ -239,14 +239,36 @@ export default {
           const email = body.email;
           if (!email) return new Response('Missing email', { status: 400 });
 
+          const apiHeaders = { 'Content-Type': 'application/json', 'X-API-Key': env.SYSTEME_API_KEY };
+
+          // Stap 1: contact aanmaken of ophalen
           const contactRes = await fetch('https://api.systeme.io/api/contacts', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-API-Key': env.SYSTEME_API_KEY },
+            headers: apiHeaders,
             body: JSON.stringify({ email })
           });
-          const contactData = await contactRes.json();
+          let contactData = await contactRes.json();
 
-          return new Response(JSON.stringify({ ok: true, status: contactRes.status, contactData }), {
+          // Als contact al bestaat, ophalen via email
+          if (contactRes.status === 422) {
+            const getRes = await fetch(`https://api.systeme.io/api/contacts?email=${encodeURIComponent(email)}`, {
+              headers: apiHeaders
+            });
+            const getData = await getRes.json();
+            contactData = getData.items?.[0] || {};
+          }
+
+          // Stap 2: tag toevoegen
+          const contactId = contactData.id;
+          if (contactId) {
+            await fetch('https://api.systeme.io/api/contact-tag-applications', {
+              method: 'POST',
+              headers: apiHeaders,
+              body: JSON.stringify({ contact: { id: contactId }, tag: { id: 1928422 } })
+            });
+          }
+
+          return new Response(JSON.stringify({ ok: true }), {
             headers: { 'Content-Type': 'application/json' }
           });
         }
