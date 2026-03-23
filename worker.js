@@ -251,15 +251,17 @@ export default {
           const contactId = contactData.id;
 
           // Stap 2: tag toevoegen
+          let tagResult = null;
           if (contactId) {
-            await fetch('https://api.systeme.io/api/contact-tag-applications', {
+            const tagRes = await fetch('https://api.systeme.io/api/contact-tag-applications', {
               method: 'POST',
               headers,
               body: JSON.stringify({ contact: { id: contactId }, tag: { id: 1928422 } })
             });
+            tagResult = { status: tagRes.status, body: await tagRes.json() };
           }
 
-          return new Response(JSON.stringify({ ok: true, status: contactRes.status, contactData }), {
+          return new Response(JSON.stringify({ ok: true, status: contactRes.status, contactData, tagResult }), {
             headers: { 'Content-Type': 'application/json' }
           });
         }
