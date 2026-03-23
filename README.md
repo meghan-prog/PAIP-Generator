@@ -77,6 +77,10 @@ wrangler dev
 
 This runs the worker and frontend locally at `http://localhost:8787`.
 
+## Live URL
+
+[https://generator.winst.ai](https://generator.winst.ai)
+
 ## Deployment
 
 ```bash
