@@ -9,7 +9,7 @@ A **Personalized Automated Intelligent Product** is an AI-powered tool where a u
 ## Features
 
 - Website scraping for extra context (server-side, no CORS)
-- 5 PAIP ideas generated via Claude AI (claude-sonnet-4)
+- 5 PAIP ideas generated via Claude AI (`claude-sonnet-4-20250514`)
 - Email wall to unlock 3 premium PAIPs
 - Systeme.io integration for lead capture
 - Animated loading sequence with progress bar
@@ -18,23 +18,20 @@ A **Personalized Automated Intelligent Product** is an AI-powered tool where a u
 ## Tech Stack
 
 - **Frontend**: Vanilla HTML/CSS/JS (single file)
-- **Backend**: Netlify Functions (Node.js)
+- **Backend**: Cloudflare Workers (Node.js-compatible runtime)
 - **AI**: Anthropic Claude API (`claude-sonnet-4-20250514`)
 - **Email/CRM**: Systeme.io API
-- **Hosting**: Netlify
+- **Hosting**: Cloudflare
 
 ## Project Structure
 
 ```
 paip-generator/
-├── index.html                    # Frontend (single-page app)
-├── netlify.toml                  # Netlify config + redirects
-├── .env.example                  # Environment variable template
+├── index.html        # Frontend (single-page app)
+├── worker.js         # Cloudflare Worker (Claude API + website fetch + Systeme.io)
+├── wrangler.toml     # Cloudflare Workers config
 ├── .gitignore
-├── README.md
-└── netlify/
-    └── functions/
-        └── claude.js             # Serverless function (Claude API + website fetch)
+└── README.md
 ```
 
 ## Setup
@@ -46,40 +43,23 @@ git clone https://github.com/YOUR_USERNAME/paip-generator.git
 cd paip-generator
 ```
 
-### 2. Connect to Netlify
-
-Deploy via the [Netlify UI](https://app.netlify.com) by connecting your GitHub repo, or use the CLI:
+### 2. Install Wrangler CLI
 
 ```bash
-npm install -g netlify-cli
-netlify init
+npm install -g wrangler
+wrangler login
 ```
 
 ### 3. Set environment variables
 
-In Netlify → Site settings → Environment variables, add:
+In the [Cloudflare Dashboard](https://dash.cloudflare.com) → Workers & Pages → your worker → Settings → Variables, add:
 
 ```
 ANTHROPIC_API_KEY=your_anthropic_api_key_here
+SYSTEME_API_KEY=your_systeme_api_key_here
 ```
 
-Or copy `.env.example` to `.env` for local development:
-
-```bash
-cp .env.example .env
-# then fill in your key
-```
-
-### 4. Configure Systeme.io (optional)
-
-In `index.html`, update the constants at the top of the `<script>` block:
-
-```js
-const SYSTEME_API_KEY = "YOUR_SYSTEME_API_KEY";
-const SYSTEME_TAG_ID  = 12345; // your tag ID, or 0 to skip tagging
-```
-
-### 5. Update the Calendly link
+### 4. Update the Calendly link
 
 In `index.html`, find and replace:
 
@@ -92,14 +72,18 @@ Replace `jouw-link` with your actual Calendly URL.
 ## Local Development
 
 ```bash
-netlify dev
+wrangler dev
 ```
 
-This runs the frontend and serverless functions locally at `http://localhost:8888`.
+This runs the worker and frontend locally at `http://localhost:8787`.
 
 ## Deployment
 
-Push to `main` — Netlify auto-deploys on every commit.
+```bash
+wrangler deploy
+```
+
+Or push to your connected GitHub repo if you have Cloudflare Pages/Workers CI set up.
 
 ---
 
