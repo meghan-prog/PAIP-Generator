@@ -479,6 +479,13 @@ function startAnalyse() {
   userEmail = email;
   userInput = { url, niche, doelgroep, probleem };
 
+  // Meteen e-mail opslaan, niet wachten op de wall
+  fetch('/api/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'subscribe', email })
+  }).catch(() => {});
+
   const label = url ? url.replace(/^https?:\/\//, '').split('/')[0] : niche.substring(0, 42);
   document.getElementById('domain-label').textContent = label;
 

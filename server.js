@@ -59,6 +59,28 @@ app.post('/api/claude', async (req, res) => {
       return res.json({ text });
     }
 
+    if (body.action === 'subscribe') {
+      const email = body.email;
+      if (!email) return res.status(400).send('Missing email');
+
+      try {
+        const tagsRes = await fetch('https://api.systeme.io/api/tags?limit=100', {
+          headers: { 'X-API-Key': process.env.SYSTEME_API_KEY }
+        });
+        const tagsData = await tagsRes.json();
+        const tag = tagsData.items?.find(t => t.name === 'PAIP Generator');
+        const contactBody = { email };
+        if (tag) contactBody.tags = [{ id: tag.id }];
+        await fetch('https://api.systeme.io/api/contacts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-API-Key': process.env.SYSTEME_API_KEY },
+          body: JSON.stringify(contactBody)
+        });
+      } catch (e) { /* non-fatal */ }
+
+      return res.json({ ok: true });
+    }
+
     return res.status(400).send('Unknown action');
 
   } catch (e) {
