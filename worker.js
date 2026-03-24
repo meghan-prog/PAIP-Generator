@@ -211,6 +211,8 @@ export default {
 </table>
 </body></html>`;
 
+          const timestamp = new Date().toLocaleString('nl-NL', { timeZone: 'Europe/Amsterdam' });
+
           await fetch('https://hook.eu2.make.com/dnl9n48iomi9y8msg34atyfl38s6qn34', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -229,6 +231,24 @@ export default {
               html: htmlEmail
             })
           });
+
+          // Google Sheets logging
+          if (env.SHEETS_WEBHOOK_URL) {
+            fetch(env.SHEETS_WEBHOOK_URL, {
+              method: 'POST',
+              redirect: 'follow',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                timestamp,
+                email,
+                instagram: instagram || '',
+                website: url || '',
+                niche: niche || '',
+                doelgroep: doelgroep || '',
+                probleem: probleem || ''
+              })
+            }).catch(() => {});
+          }
 
           return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
         }
@@ -278,15 +298,7 @@ export default {
             });
           }
 
-          // Google Sheets logging
-          if (env.SHEETS_WEBHOOK_URL) {
-            fetch(env.SHEETS_WEBHOOK_URL, {
-              method: 'POST',
-              redirect: 'follow',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, instagram })
-            }).catch(() => {});
-          }
+          // Google Sheets logging handled in send_email
 
           return new Response(JSON.stringify({ ok: true }), {
             headers: { 'Content-Type': 'application/json' }
