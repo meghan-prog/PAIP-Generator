@@ -282,6 +282,7 @@ export default {
           if (env.SHEETS_WEBHOOK_URL) {
             fetch(env.SHEETS_WEBHOOK_URL, {
               method: 'POST',
+              redirect: 'follow',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email, instagram })
             }).catch(() => {});
