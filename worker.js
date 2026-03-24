@@ -278,6 +278,15 @@ export default {
             });
           }
 
+          // Google Sheets logging
+          if (env.SHEETS_WEBHOOK_URL) {
+            fetch(env.SHEETS_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, instagram })
+            }).catch(() => {});
+          }
+
           return new Response(JSON.stringify({ ok: true }), {
             headers: { 'Content-Type': 'application/json' }
           });
