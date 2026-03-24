@@ -261,9 +261,9 @@ export default {
             // Instagram bijwerken op bestaand contact
             if (contactData.id && instagram) {
               await fetch(`https://api.systeme.io/api/contacts/${contactData.id}`, {
-                method: 'PATCH',
+                method: 'PUT',
                 headers: apiHeaders,
-                body: JSON.stringify({ fields: [{ slug: 'instagram', value: instagram }] })
+                body: JSON.stringify({ email, fields: [{ slug: 'instagram', value: instagram }] })
               }).catch(() => {});
             }
           }
