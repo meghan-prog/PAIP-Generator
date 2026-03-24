@@ -250,13 +250,22 @@ export default {
           });
           let contactData = await contactRes.json();
 
-          // Als contact al bestaat, ophalen via email
+          // Als contact al bestaat, ophalen en instagram updaten
           if (contactRes.status === 422) {
             const getRes = await fetch(`https://api.systeme.io/api/contacts?email=${encodeURIComponent(email)}`, {
               headers: apiHeaders
             });
             const getData = await getRes.json();
             contactData = getData.items?.[0] || {};
+
+            // Instagram bijwerken op bestaand contact
+            if (contactData.id && instagram) {
+              await fetch(`https://api.systeme.io/api/contacts/${contactData.id}`, {
+                method: 'PATCH',
+                headers: apiHeaders,
+                body: JSON.stringify({ fields: [{ slug: 'instagram', value: instagram }] })
+              }).catch(() => {});
+            }
           }
 
           // Stap 2: tag toevoegen
