@@ -143,12 +143,12 @@ export default {
                   <tr>
                     <td width="48%" style="vertical-align:top;padding-right:8px;">
                       <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8a7a70;margin-bottom:6px;">Zonder PAIP</div>
-                      <div style="font-size:13px;color:#8a7a70;line-height:1.6;">${(voorna_zonder || '').replace(/\n/g,'<br>')}</div>
+                      <div style="font-size:13px;color:#8a7a70;line-height:1.6;">${(Array.isArray(voorna_zonder) ? voorna_zonder.join('\n') : (voorna_zonder || '')).replace(/\n/g,'<br>')}</div>
                     </td>
                     <td width="4%" style="border-left:1px solid #d4c9bb;">&nbsp;</td>
                     <td width="48%" style="vertical-align:top;padding-left:8px;">
                       <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8B271E;margin-bottom:6px;">Met PAIP</div>
-                      <div style="font-size:13px;color:#2e0e02;font-weight:500;line-height:1.6;">${(voorna_met || '').replace(/\n/g,'<br>')}</div>
+                      <div style="font-size:13px;color:#2e0e02;font-weight:500;line-height:1.6;">${(Array.isArray(voorna_met) ? voorna_met.join('\n') : (voorna_met || '')).replace(/\n/g,'<br>')}</div>
                     </td>
                   </tr>
                 </table>
