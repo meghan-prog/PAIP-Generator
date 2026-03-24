@@ -143,12 +143,12 @@ export default {
                   <tr>
                     <td width="48%" style="vertical-align:top;padding-right:8px;">
                       <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8a7a70;margin-bottom:6px;">Zonder PAIP</div>
-                      <div style="font-size:13px;color:#8a7a70;line-height:1.6;">${(voorna_zonder || '').replace(/\n/g,'<br>')}</div>
+                      <div style="font-size:13px;color:#8a7a70;line-height:1.6;">${(Array.isArray(voorna_zonder) ? voorna_zonder.join('\n') : (voorna_zonder || '')).replace(/\n/g,'<br>')}</div>
                     </td>
                     <td width="4%" style="border-left:1px solid #d4c9bb;">&nbsp;</td>
                     <td width="48%" style="vertical-align:top;padding-left:8px;">
                       <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8B271E;margin-bottom:6px;">Met PAIP</div>
-                      <div style="font-size:13px;color:#2e0e02;font-weight:500;line-height:1.6;">${(voorna_met || '').replace(/\n/g,'<br>')}</div>
+                      <div style="font-size:13px;color:#2e0e02;font-weight:500;line-height:1.6;">${(Array.isArray(voorna_met) ? voorna_met.join('\n') : (voorna_met || '')).replace(/\n/g,'<br>')}</div>
                     </td>
                   </tr>
                 </table>
@@ -250,13 +250,22 @@ export default {
           });
           let contactData = await contactRes.json();
 
-          // Als contact al bestaat, ophalen via email
+          // Als contact al bestaat, ophalen en instagram updaten
           if (contactRes.status === 422) {
             const getRes = await fetch(`https://api.systeme.io/api/contacts?email=${encodeURIComponent(email)}`, {
               headers: apiHeaders
             });
             const getData = await getRes.json();
             contactData = getData.items?.[0] || {};
+
+            // Instagram bijwerken op bestaand contact
+            if (contactData.id && instagram) {
+              await fetch(`https://api.systeme.io/api/contacts/${contactData.id}`, {
+                method: 'PUT',
+                headers: apiHeaders,
+                body: JSON.stringify({ email, fields: [{ slug: 'instagram', value: instagram }] })
+              }).catch(() => {});
+            }
           }
 
           // Stap 2: tag toevoegen
@@ -267,6 +276,15 @@ export default {
               headers: apiHeaders,
               body: JSON.stringify({ contact: { id: contactId }, tag: { id: 1928422 } })
             });
+          }
+
+          // Google Sheets logging
+          if (env.SHEETS_WEBHOOK_URL) {
+            fetch(env.SHEETS_WEBHOOK_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, instagram })
+            }).catch(() => {});
           }
 
           return new Response(JSON.stringify({ ok: true }), {
