@@ -66,7 +66,7 @@ export default {
         }
 
         if (body.action === 'send_email') {
-          const { email, niche, doelgroep, probleem, url, paips, voorna_zonder, voorna_met, voorna_bottom } = body;
+          const { email, instagram, niche, doelgroep, probleem, url, paips, voorna_zonder, voorna_met, voorna_bottom } = body;
           if (!email || !paips?.length) return new Response('Missing data', { status: 400 });
 
           // Subscribe to Systeme.io
@@ -79,16 +79,13 @@ export default {
           } catch(e) { /* non-fatal */ }
 
           // Build email HTML
-          const isPremium = (i) => i >= 2;
-
           const paipCards = paips.map((p, i) => {
-            const featured = isPremium(i);
-            const numBg = featured ? '#8B271E' : 'rgba(139,39,30,0.12)';
-            const numColor = featured ? '#ffffff' : '#2e0e02';
-            const cardBorder = featured ? '#8B271E' : '#d4c9bb';
-            const cardBg = featured ? 'linear-gradient(160deg,#fdf6f0,#ffffff)' : '#ffffff';
-            const headerBg = featured ? 'rgba(139,39,30,0.08)' : '#f5f0ea';
-            const badge = featured ? '⭐ Premium' : `PAIP ${i + 1}`;
+            const numBg = 'rgba(139,39,30,0.12)';
+            const numColor = '#2e0e02';
+            const cardBorder = '#d4c9bb';
+            const cardBg = '#ffffff';
+            const headerBg = '#f5f0ea';
+            const badge = `PAIP ${i + 1} · Gratis`;
             return `
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;border-radius:14px;border:1px solid ${cardBorder};background:${cardBg};overflow:hidden;">
               <tr>
@@ -188,7 +185,7 @@ export default {
 
       <!-- HEADER -->
       <tr><td style="padding:28px 0 20px;">
-        <div style="font-family:Oswald,Arial,sans-serif;font-weight:700;font-size:34px;line-height:1.0;text-transform:uppercase;color:#2e0e02;">JOUW 5<br><span style="color:#8B271E;">PAIP-IDEEËN</span></div>
+        <div style="font-family:Oswald,Arial,sans-serif;font-weight:700;font-size:34px;line-height:1.0;text-transform:uppercase;color:#2e0e02;">JOUW 3<br><span style="color:#8B271E;">GRATIS PAIPs</span></div>
         <div style="font-size:14px;color:#8a7a70;margin-top:10px;line-height:1.6;">
           Voor: <strong style="color:#2e0e02;">${niche || url || 'jouw business'}</strong>${doelgroep ? `<br>Doelgroep: ${doelgroep}` : ''}
         </div>
@@ -219,6 +216,7 @@ export default {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email,
+              instagram: instagram || '',
               niche,
               doelgroep,
               probleem,
@@ -227,7 +225,7 @@ export default {
               voorna_zonder,
               voorna_met,
               voorna_bottom,
-              subject: `Jouw 5 PAIP-ideeën voor ${niche || url || 'jouw business'}`,
+              subject: `Jouw 3 gratis PAIP-ideeën voor ${niche || url || 'jouw business'}`,
               html: htmlEmail
             })
           });
@@ -237,15 +235,18 @@ export default {
 
         if (body.action === 'subscribe') {
           const email = body.email;
+          const instagram = body.instagram || '';
           if (!email) return new Response('Missing email', { status: 400 });
 
           const apiHeaders = { 'Content-Type': 'application/json', 'X-API-Key': env.SYSTEME_API_KEY };
 
           // Stap 1: contact aanmaken of ophalen
+          const contactBody = { email };
+          if (instagram) contactBody.fields = [{ slug: 'instagram', value: instagram }];
           const contactRes = await fetch('https://api.systeme.io/api/contacts', {
             method: 'POST',
             headers: apiHeaders,
-            body: JSON.stringify({ email })
+            body: JSON.stringify(contactBody)
           });
           let contactData = await contactRes.json();
 
