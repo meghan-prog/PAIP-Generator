@@ -213,24 +213,28 @@ export default {
 
           const timestamp = new Date().toLocaleString('nl-NL', { timeZone: 'Europe/Amsterdam' });
 
-          await fetch('https://hook.eu2.make.com/dnl9n48iomi9y8msg34atyfl38s6qn34', {
+          // Send email via Resend
+          const resendRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${env.RESEND_API_KEY}`
+            },
             body: JSON.stringify({
-              email,
-              instagram: instagram || '',
-              niche,
-              doelgroep,
-              probleem,
-              url,
-              paips,
-              voorna_zonder,
-              voorna_met,
-              voorna_bottom,
+              from: env.RESEND_FROM_EMAIL || 'Meghan Eckenbach <hello@meghaneckenbach.nl>',
+              to: [email],
               subject: `Jouw 3 gratis PAIP-ideeën voor ${niche || url || 'jouw business'}`,
               html: htmlEmail
             })
           });
+
+          if (!resendRes.ok) {
+            const resendErr = await resendRes.json().catch(() => ({}));
+            return new Response(JSON.stringify({ error: 'Email verzenden mislukt', detail: resendErr }), {
+              status: 500,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
 
           // Google Sheets logging
           if (env.SHEETS_WEBHOOK_URL) {
