@@ -213,6 +213,24 @@ export default {
 
           const timestamp = new Date().toLocaleString('nl-NL', { timeZone: 'Europe/Amsterdam' });
 
+          // Google Sheets logging — altijd, ongeacht of email lukt
+          if (env.SHEETS_WEBHOOK_URL) {
+            ctx.waitUntil(fetch(env.SHEETS_WEBHOOK_URL, {
+              method: 'POST',
+              redirect: 'follow',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                timestamp,
+                email,
+                instagram: instagram || '',
+                website: url || '',
+                niche: niche || '',
+                doelgroep: doelgroep || '',
+                probleem: probleem || ''
+              })
+            }).catch(() => {}));
+          }
+
           // Send email via Resend
           const resendRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -234,24 +252,6 @@ export default {
               status: 500,
               headers: { 'Content-Type': 'application/json' }
             });
-          }
-
-          // Google Sheets logging
-          if (env.SHEETS_WEBHOOK_URL) {
-            ctx.waitUntil(fetch(env.SHEETS_WEBHOOK_URL, {
-              method: 'POST',
-              redirect: 'follow',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                timestamp,
-                email,
-                instagram: instagram || '',
-                website: url || '',
-                niche: niche || '',
-                doelgroep: doelgroep || '',
-                probleem: probleem || ''
-              })
-            }).catch(() => {}));
           }
 
           return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
