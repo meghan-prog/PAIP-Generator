@@ -1,5 +1,5 @@
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname === '/api/claude' && request.method === 'POST') {
@@ -238,7 +238,7 @@ export default {
 
           // Google Sheets logging
           if (env.SHEETS_WEBHOOK_URL) {
-            fetch(env.SHEETS_WEBHOOK_URL, {
+            ctx.waitUntil(fetch(env.SHEETS_WEBHOOK_URL, {
               method: 'POST',
               redirect: 'follow',
               headers: { 'Content-Type': 'application/json' },
@@ -251,7 +251,7 @@ export default {
                 doelgroep: doelgroep || '',
                 probleem: probleem || ''
               })
-            }).catch(() => {});
+            }).catch(() => {}));
           }
 
           return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });

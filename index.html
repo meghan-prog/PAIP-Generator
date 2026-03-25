@@ -635,31 +635,42 @@ function renderResults(data) {
 
   // Auto-stuur e-mail rapport
   document.getElementById('confirm-email').textContent = userEmail;
-  sendToSysteme(userEmail);
+  sendToSysteme(userEmail, data);
   setTimeout(openModal, 600);
 }
 
-async function sendToSysteme(email) {
-  try {
-    const payload = {
-      action: 'send_email',
-      email,
-      instagram: userInstagram,
-      niche: userInput.niche || '',
-      doelgroep: userInput.doelgroep || '',
-      probleem: userInput.probleem || '',
-      url: userInput.url || '',
-      paips: generatedResults?.paips || [],
-      voorna_zonder: generatedResults?.voorna_zonder || '',
-      voorna_met: generatedResults?.voorna_met || '',
-      voorna_bottom: generatedResults?.voorna_bottom || ''
-    };
-    await fetch("/api/claude", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-  } catch(e) { console.error("Email fout:", e); }
+async function sendToSysteme(email, data) {
+  const payload = {
+    action: 'send_email',
+    email,
+    instagram: userInstagram,
+    niche: userInput.niche || '',
+    doelgroep: userInput.doelgroep || '',
+    probleem: userInput.probleem || '',
+    url: userInput.url || '',
+    paips: data?.paips || [],
+    voorna_zonder: data?.voorna_zonder || '',
+    voorna_met: data?.voorna_met || '',
+    voorna_bottom: data?.voorna_bottom || ''
+  };
+
+  const maxRetries = 3;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch("/api/claude", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) return;
+      const err = await res.json().catch(() => ({}));
+      console.warn(`Email poging ${attempt} mislukt:`, err);
+    } catch(e) {
+      console.warn(`Email poging ${attempt} netwerk-fout:`, e);
+    }
+    if (attempt < maxRetries) await new Promise(r => setTimeout(r, attempt * 2000));
+  }
+  console.error("Email verzenden mislukt na 3 pogingen.");
 }
 </script>
 </body>
