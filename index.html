@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PAIP Generator | Meghan Eckenbach</title>
+<title>Digitale Producten 2.0 Scan | Meghan Eckenbach</title>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -265,16 +265,16 @@
 <!-- ── SCREEN 1 ── -->
 <div id="screen-hero" class="screen active">
   <h1 class="hero-headline">
-    Welke gratis PAIP<br>kun jij
-    <span class="accent">weggeven?</span>
+    Welke digitale<br>producten 2.0
+    <span class="accent">passen bij jou?</span>
   </h1>
-  <p class="hero-sub">Beantwoord 3 vragen. In 60 seconden zie je welke AI-producten jij kunt bouwen - én voor hoeveel je ze verkoopt.</p>
+  <p class="hero-sub">Geen ebooks. Geen templates. Geen statische PDF's. Maar digitale producten die zich aanpassen aan jouw klant. In 60 seconden zie je welke 3 adaptieve producten jij kunt bouwen.</p>
 
   <div class="creator-row">
     <div class="avatar">ME</div>
     <div class="creator-info">
       <strong>Meghan Eckenbach</strong>
-      <span>Bouwt schaalbare AI-producten voor coaches<br>en consultants - zonder extra uren.</span>
+      <span>Bouwt adaptieve digitale producten 2.0 voor<br>coaches en consultants - zonder extra uren.</span>
     </div>
   </div>
 
@@ -298,8 +298,8 @@
   <input type="text" id="input-instagram" class="input-field" placeholder="@jouwinstagram">
 
   <div id="api-error" style="display:none;background:#fdecea;border:1px solid #e57373;border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:14px;color:#b71c1c;line-height:1.5;"></div>
-  <button class="btn-primary" onclick="startAnalyse()">Genereer mijn PAIP-ideeën →</button>
-  <p class="fine-print">Gratis. Geen verkoopgesprek. Alleen concrete ideeën.</p>
+  <button class="btn-primary" onclick="startAnalyse()">Start mijn Digitale Producten 2.0 Scan →</button>
+  <p class="fine-print">Gratis. Geen verkoopgesprek. Alleen adaptieve producten.</p>
 </div>
 
 <!-- ── LOADING ── -->
@@ -317,8 +317,8 @@
 
 <!-- ── RESULTS ── -->
 <div id="screen-results" class="screen">
-  <h2 class="results-headline">Jouw 3 <span class="accent">gratis PAIPs</span> zijn klaar</h2>
-  <p class="results-sub">Geen generieke tips. Gebouwd op wat jij doet, voor wie jij werkt.</p>
+  <h2 class="results-headline">Jouw 3 <span class="accent">digitale producten 2.0</span> zijn klaar</h2>
+  <p class="results-sub">Geen ebooks. Geen templates. Adaptieve producten die zich aanpassen aan elke klant.</p>
 
   <!-- CARD 1 - FEATURED -->
   <div class="paip-card featured">
@@ -392,12 +392,12 @@
 <div id="modal-overlay" style="display:none" onclick="handleOverlayClick(event)">
   <div id="modal-box">
     <div class="check-circle">✓</div>
-    <div class="confirm-title">Rapport onderweg.</div>
-    <p class="confirm-sub">Check je inbox op <strong id="confirm-email"></strong>. Je krijgt alle 3 gratis PAIPs uitgewerkt plus een stap-voor-stap per idee.</p>
+    <div class="confirm-title">Scan onderweg.</div>
+    <p class="confirm-sub">Check je inbox op <strong id="confirm-email"></strong>. Je krijgt alle 3 adaptieve producten uitgewerkt plus een stap-voor-stap per idee.</p>
     <p class="confirm-note">Kan tot 5 minuten duren. Niks gezien? Check je spamfolder.</p>
     <div class="upsell-box">
-      <strong>Welke PAIP zou ik als eerste bouwen?</strong>
-      <p>In 20 minuten kijk ik met je mee en vertel ik je precies welke PAIP het meeste oplevert - en hoe je hem morgen live kunt hebben.</p>
+      <strong>Welk product 2.0 zou ik als eerste bouwen?</strong>
+      <p>In 20 minuten kijk ik met je mee en vertel ik je precies welk adaptief product het meeste oplevert - en hoe je het morgen live kunt hebben.</p>
     </div>
     <button class="btn-primary" style="margin-top:0" onclick="window.open('https://www.monetizemetmeg.nl/770377d7','_blank')">Plan een gratis gesprek van 20 min →</button>
     <p class="modal-meta">Gratis · 20 minuten · Meghan plant dit persoonlijk in</p>
@@ -405,17 +405,17 @@
   </div>
 </div>
 
-<div class="footer">Meghan Eckenbach · PAIP Generator</div>
+<div class="footer">Meghan Eckenbach · Digitale Producten 2.0 Scan</div>
 
 <script>
 
 const loadingSteps = [
   "We halen je website op...",
   "We analyseren jouw niche en doelgroep...",
-  "We bedenken PAIPs die écht waarde toevoegen...",
-  "We berekenen wat je ervoor kunt vragen...",
+  "We bedenken adaptieve producten die zich aanpassen aan jouw klant...",
+  "We filteren alle statische ebooks, templates en PDF's eruit...",
   "We schrijven de 'waarom het werkt' uitleg...",
-  "We finaliseren jouw top 5...",
+  "We finaliseren jouw top 3...",
 ];
 const stepProgress = [10, 25, 44, 60, 78, 90];
 
@@ -528,40 +528,55 @@ async function generatePAIPs(niche, doelgroep, probleem, url) {
     ? `\n\nWEBSITE CONTENT (gebruik dit als extra context):\n${websiteContext}`
     : '';
 
-  const prompt = `Je bent een expert in het bedenken van PAIP's (Personalized Automated Intelligent Products) voor coaches, consultants en creators.
+  const prompt = `Je bent een expert in het bedenken van Digitale Producten 2.0 voor coaches, consultants en creators.
 
-Een PAIP is een gepersonaliseerd AI-product waarbij de gebruiker een formulier invult en een uniek op maat gemaakt resultaat terugkrijgt. PAIPs kunnen vele vormen aannemen:
-- 🔍 Scanner / Diagnose
-- 🤖 Bot / AI Assistent
-- 🧮 Calculator / Scorekaart
-- 🗺️ Stappenplan / Routekaart
-- 📊 Audit / Rapport
-- 💬 Tekst Generator
-- 🎯 Matcher
-- 📅 Planner
-- 🧠 Quiz / Profiler
-- ⚡ Specifieke Tool
+WAT IS EEN DIGITAAL PRODUCT 2.0?
+Een digitaal product 2.0 is een ADAPTIEF product dat zich aanpast aan de individuele klant. De klant vult input in (formulier, vragen, keuzes) en krijgt een UNIEK, op maat gemaakt resultaat terug - elke keer anders, elke keer persoonlijk. Powered by AI of slimme logica.
+
+WAT EEN DIGITAAL PRODUCT 2.0 ABSOLUUT NIET IS (deze mag je NOOIT voorstellen):
+❌ Ebook, e-book, mini-boek, gids, whitepaper
+❌ Template, invulsjabloon, Notion-template, Canva-template
+❌ Checklist, werkblad, workbook, printable
+❌ PDF-download, cheatsheet, swipe file
+❌ Video-training, cursus, webinar, masterclass
+❌ E-mailserie, nieuwsbrief
+❌ Elke vorm van STATISCHE content die voor iedere klant hetzelfde is
+
+WAT WÉL TOEGESTAAN IS (adaptieve vormen, kies varianten):
+- 🔍 Scanner / Diagnose tool (analyseert input, geeft persoonlijk oordeel)
+- 🤖 AI Assistent / Bot (voert gesprek, reageert op situatie)
+- 🧮 Calculator met persoonlijk advies (niet alleen getallen, ook duiding)
+- 🗺️ Gepersonaliseerd stappenplan (uniek per klant op basis van hun input)
+- 📊 On-demand audit/rapport (klant-specifiek gegenereerd)
+- 💬 AI tekst/copy-generator (produceert output op basis van klantdata)
+- 🎯 Matcher (koppelt klant aan beste optie op basis van profiel)
+- 🧠 Profiler / Archetype-bepaler met persoonlijke uitkomst
+- ⚡ Klant-specifieke tool die een concreet probleem oplost
+
+REGEL: Elk voorstel MOET werken volgens het principe "klant vult X in → krijgt uniek Y terug". Als twee klanten hetzelfde zouden krijgen, is het GEEN digitaal product 2.0 en mag je het niet voorstellen.
 
 INPUT:
 - Niche/rol: ${niche}
 - Doelgroep: ${doelgroep}
 - Grootste klantprobleem: ${probleem}${websitePart}
 
-Genereer 3 gratis PAIP-weggevers (lead magnets) die ÉCHT passen bij deze niche. Varieer in vorm. Alle 3 zijn gratis weg te geven aan de doelgroep.
+Genereer 3 gratis adaptieve Digitale Producten 2.0 (lead magnets) die ÉCHT passen bij deze niche. Varieer in vorm. Alle 3 moeten zich aanpassen aan de individuele klant op basis van hun input. Alle 3 zijn gratis weg te geven aan de doelgroep.
 
-Per PAIP geef je ook een "waarom het werkt" uitleg van 2-3 zinnen die specifiek ingaat op de psychologie of het mechanisme achter dit idee voor DEZE doelgroep.
+Per product geef je een "waarom het werkt" uitleg van 2-3 zinnen die specifiek ingaat op:
+1. Waarom adaptief/persoonlijk beter werkt dan een statisch alternatief voor DEZE doelgroep
+2. Welke psychologie of welk mechanisme dit activeert
 
 Reageer ALLEEN met geldig JSON (geen markdown, geen uitleg, geen backticks):
 {
-  "voorna_zonder": "3 korte punten zonder PAIP, specifiek voor deze niche",
-  "voorna_met": "3 korte punten met PAIP, specifiek voor deze niche",
-  "voorna_bottom": "1 zin over de concurrentiepositie in deze niche",
+  "voorna_zonder": "3 korte punten over wat er gebeurt met statische lead magnets (ebook/template/PDF) in deze niche",
+  "voorna_met": "3 korte punten over wat er gebeurt met een adaptief digitaal product 2.0 in deze niche",
+  "voorna_bottom": "1 zin over waarom adaptieve producten de concurrentie in deze niche verslaan",
   "paips": [
     {
-      "type": "emoji + vorm (max 3 woorden)",
+      "type": "emoji + adaptieve vorm (max 3 woorden, bijv. 'Scanner', 'AI Assistent', 'Matcher')",
       "titel": "pakkende naam specifiek voor deze niche (max 8 woorden)",
-      "beschrijving": "2 concrete zinnen: wat vult de gebruiker in, wat krijgt ze precies terug.",
-      "waarom": "2-3 zinnen waarom dit specifiek werkt voor deze doelgroep.",
+      "beschrijving": "2 concrete zinnen: (1) wat vult de klant precies in, (2) welk UNIEK resultaat krijgt zij terug dat voor haar persoonlijk is.",
+      "waarom": "2-3 zinnen: waarom dit adaptieve product beter werkt dan een statisch alternatief voor deze doelgroep.",
       "bouwtijd": "1 dag",
       "prijs": "Gratis",
       "model": "lead magnet"

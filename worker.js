@@ -85,7 +85,7 @@ export default {
             const cardBorder = '#d4c9bb';
             const cardBg = '#ffffff';
             const headerBg = '#f5f0ea';
-            const badge = `PAIP ${i + 1} · Gratis`;
+            const badge = `Product 2.0 · ${i + 1} · Gratis`;
             return `
             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:16px;border-radius:14px;border:1px solid ${cardBorder};background:${cardBg};overflow:hidden;">
               <tr>
@@ -142,12 +142,12 @@ export default {
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
                     <td width="48%" style="vertical-align:top;padding-right:8px;">
-                      <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8a7a70;margin-bottom:6px;">Zonder PAIP</div>
+                      <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8a7a70;margin-bottom:6px;">Statisch (ebook/template)</div>
                       <div style="font-size:13px;color:#8a7a70;line-height:1.6;">${(Array.isArray(voorna_zonder) ? voorna_zonder.join('\n') : (voorna_zonder || '')).replace(/\n/g,'<br>')}</div>
                     </td>
                     <td width="4%" style="border-left:1px solid #d4c9bb;">&nbsp;</td>
                     <td width="48%" style="vertical-align:top;padding-left:8px;">
-                      <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8B271E;margin-bottom:6px;">Met PAIP</div>
+                      <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8B271E;margin-bottom:6px;">Adaptief (Product 2.0)</div>
                       <div style="font-size:13px;color:#2e0e02;font-weight:500;line-height:1.6;">${(Array.isArray(voorna_met) ? voorna_met.join('\n') : (voorna_met || '')).replace(/\n/g,'<br>')}</div>
                     </td>
                   </tr>
@@ -162,7 +162,7 @@ export default {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<title>Jouw 5 PAIP-ideeën</title>
+<title>Jouw 3 Digitale Producten 2.0</title>
 </head>
 <body style="margin:0;padding:0;background:#E9DFD3;font-family:'DM Sans',Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#E9DFD3;">
@@ -185,7 +185,7 @@ export default {
 
       <!-- HEADER -->
       <tr><td style="padding:28px 0 20px;">
-        <div style="font-family:Oswald,Arial,sans-serif;font-weight:700;font-size:34px;line-height:1.0;text-transform:uppercase;color:#2e0e02;">JOUW 3<br><span style="color:#8B271E;">GRATIS PAIPs</span></div>
+        <div style="font-family:Oswald,Arial,sans-serif;font-weight:700;font-size:34px;line-height:1.0;text-transform:uppercase;color:#2e0e02;">JOUW 3 DIGITALE<br><span style="color:#8B271E;">PRODUCTEN 2.0</span></div>
         <div style="font-size:14px;color:#8a7a70;margin-top:10px;line-height:1.6;">
           Voor: <strong style="color:#2e0e02;">${niche || url || 'jouw business'}</strong>${doelgroep ? `<br>Doelgroep: ${doelgroep}` : ''}
         </div>
@@ -196,14 +196,14 @@ export default {
 
       <!-- PAIP CARDS -->
       <tr><td>
-        <div style="font-family:Oswald,Arial,sans-serif;font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#2e0e02;margin-bottom:14px;">Jouw ideeën</div>
+        <div style="font-family:Oswald,Arial,sans-serif;font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#2e0e02;margin-bottom:14px;">Jouw 3 adaptieve producten</div>
         ${paipCards}
       </td></tr>
 
       <!-- FOOTER -->
       <tr><td style="padding-top:28px;border-top:1px solid #d4c9bb;text-align:center;">
-        <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:#c8bdb3;">PAIP Generator &nbsp;·&nbsp; Meghan Eckenbach</div>
-        <div style="font-size:11px;color:#c8bdb3;margin-top:6px;">Je ontvangt dit omdat je de PAIP Generator hebt gebruikt.</div>
+        <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:#c8bdb3;">Digitale Producten 2.0 Scan &nbsp;·&nbsp; Meghan Eckenbach</div>
+        <div style="font-size:11px;color:#c8bdb3;margin-top:6px;">Je ontvangt dit omdat je de Digitale Producten 2.0 Scan hebt gebruikt.</div>
       </td></tr>
 
     </table>
@@ -223,7 +223,7 @@ export default {
             body: JSON.stringify({
               from: env.RESEND_FROM_EMAIL || 'Meghan Eckenbach <hello@meghaneckenbach.nl>',
               to: [email],
-              subject: `Jouw 3 gratis PAIP-ideeën voor ${niche || url || 'jouw business'}`,
+              subject: `Jouw 3 Digitale Producten 2.0 voor ${niche || url || 'jouw business'}`,
               html: htmlEmail
             })
           });
