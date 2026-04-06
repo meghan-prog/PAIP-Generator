@@ -147,7 +147,7 @@ export default {
                     </td>
                     <td width="4%" style="border-left:1px solid #d4c9bb;">&nbsp;</td>
                     <td width="48%" style="vertical-align:top;padding-left:8px;">
-                      <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8B271E;margin-bottom:6px;">Adaptief (Product 2.0)</div>
+                      <div style="font-family:Oswald,Arial,sans-serif;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#8B271E;margin-bottom:6px;">Op maat (Product 2.0)</div>
                       <div style="font-size:13px;color:#2e0e02;font-weight:500;line-height:1.6;">${(Array.isArray(voorna_met) ? voorna_met.join('\n') : (voorna_met || '')).replace(/\n/g,'<br>')}</div>
                     </td>
                   </tr>
@@ -196,7 +196,7 @@ export default {
 
       <!-- PAIP CARDS -->
       <tr><td>
-        <div style="font-family:Oswald,Arial,sans-serif;font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#2e0e02;margin-bottom:14px;">Jouw 3 adaptieve producten</div>
+        <div style="font-family:Oswald,Arial,sans-serif;font-weight:600;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:#2e0e02;margin-bottom:14px;">Jouw 3 op maat gemaakte producten</div>
         ${paipCards}
       </td></tr>
 
