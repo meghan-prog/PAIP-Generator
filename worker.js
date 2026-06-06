@@ -309,6 +309,77 @@ export default {
           });
         }
 
+        if (body.action === 'generate_webinar') {
+          const { onderwerp, doelgroep, transformatie, naam } = body;
+
+          const prompt = `Jij bent een expert webinar schrijver die webinars maakt in de "3 fouten" stijl. Maak een complete webinar op basis van de volgende informatie.
+
+WEBINAR DETAILS:
+- Onderwerp: ${onderwerp}
+- Doelgroep: ${doelgroep}
+- Grote transformatie (wat kan de deelnemer na de webinar): ${transformatie}
+- Naam spreker: ${naam || 'de spreker'}
+
+Maak precies 12 slides. Return ALLEEN valide JSON, geen markdown, geen uitleg:
+
+{
+  "webinar_titel": "De 3 [fouten/valkuilen/vergissingen] die [doelgroep] maken met [thema gerelateerd aan transformatie]",
+  "ondertitel": "Ontdek hoe je [transformatie] zonder [veelgemaakte fout of hindernis]",
+  "slides": [
+    {"nummer":1,"type":"titel","label":"","koptekst":"[webinar titel]","tekst":"[ondertitel]","punten":[],"notitie":"Welkom iedereen. Introduceer jezelf kort en vertel wat ze gaan leren."},
+    {"nummer":2,"type":"belofte","label":"NA DEZE WEBINAR...","koptekst":"Dit ga jij leren vandaag","tekst":"","punten":["[belofte 1 specifiek aan de transformatie]","[belofte 2]","[belofte 3]"],"notitie":"[spreker note]"},
+    {"nummer":3,"type":"intro","label":"EVEN VOORSTELLEN","koptekst":"${naam || 'Jij'}","tekst":"[Korte intro die geloofwaardigheid opbouwt voor het onderwerp ${onderwerp}]","punten":[],"notitie":"[spreker note: vertel jouw persoonlijke verhaal]"},
+    {"nummer":4,"type":"probleem","label":"HET PROBLEEM","koptekst":"[Herkenbaar, pijnlijk probleem voor ${doelgroep}]","tekst":"[2 concrete zinnen die het probleem levend maken. Gebruik 'jij' vorm.]","punten":[],"notitie":"[spreker note: vraag wie dit herkent]"},
+    {"nummer":5,"type":"overzicht","label":"DE 3 FOUTEN","koptekst":"Dit zijn de 3 fouten die alles blokkeren","tekst":"","punten":["[Korte naam fout 1]","[Korte naam fout 2]","[Korte naam fout 3]"],"notitie":"[spreker note: vertel dat je deze fouten zelf ook hebt gezien]"},
+    {"nummer":6,"type":"fout","label":"FOUT 1 VAN 3","koptekst":"[Fout 1: pakkende herkenbare naam]","tekst":"[Waarom dit een fout is en waarom het logisch voelt maar niet werkt. 2 krachtige zinnen.]","punten":[],"notitie":"[spreker note: gebruik een concreet voorbeeld]"},
+    {"nummer":7,"type":"fout","label":"FOUT 2 VAN 3","koptekst":"[Fout 2: pakkende herkenbare naam]","tekst":"[Waarom dit een fout is. 2 krachtige zinnen.]","punten":[],"notitie":"[spreker note: gebruik een concreet voorbeeld]"},
+    {"nummer":8,"type":"fout","label":"FOUT 3 VAN 3","koptekst":"[Fout 3: pakkende herkenbare naam]","tekst":"[Waarom dit een fout is. 2 krachtige zinnen.]","punten":[],"notitie":"[spreker note: gebruik een concreet voorbeeld]"},
+    {"nummer":9,"type":"oplossing","label":"DE OPLOSSING","koptekst":"[Jouw methode naam — geef het een catchy naam]","tekst":"[Wat maakt jouw aanpak anders. 2 zinnen.]","punten":[],"notitie":"[spreker note: vertel hoe je tot deze methode bent gekomen]"},
+    {"nummer":10,"type":"stappen","label":"HOE HET WERKT","koptekst":"In 3 stappen naar [gewenst resultaat]","tekst":"","punten":["Stap 1: [concrete actie]","Stap 2: [concrete actie]","Stap 3: [concrete actie]"],"notitie":"[spreker note: leg elke stap kort uit]"},
+    {"nummer":11,"type":"bewijs","label":"WAT DIT OPLEVERT","koptekst":"[Krachtige resultaat-statement]","tekst":"","punten":["[Concreet resultaat 1]","[Concreet resultaat 2]","[Concreet resultaat 3]"],"notitie":"[spreker note: deel een klantverhaal of eigen resultaat]"},
+    {"nummer":12,"type":"cta","label":"VOLGENDE STAP","koptekst":"[Duidelijke urgente CTA]","tekst":"[Wat moeten ze nu doen? 1-2 zinnen.]","punten":[],"notitie":"[spreker note: maak het simpel — één actie. Bedank iedereen.]"}
+  ]
+}
+
+Schrijf alles in het Nederlands. Wees specifiek voor doelgroep '${doelgroep}' en onderwerp '${onderwerp}'. Return ALLEEN de JSON.`;
+
+          const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': env.ANTHROPIC_API_KEY,
+              'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 4000,
+              messages: [{ role: 'user', content: prompt }]
+            })
+          });
+
+          if (!claudeRes.ok) {
+            const err = await claudeRes.text();
+            return new Response(JSON.stringify({ error: err }), {
+              status: 500,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
+
+          const claudeData = await claudeRes.json();
+          if (claudeData.error) {
+            return new Response(JSON.stringify({ error: claudeData.error.message }), {
+              status: 500,
+              headers: { 'Content-Type': 'application/json' }
+            });
+          }
+
+          const raw = claudeData.content[0].text.trim().replace(/^```json\n?/, '').replace(/\n?```$/, '');
+          return new Response(raw, {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+
         return new Response('Unknown action', { status: 400 });
 
       } catch (e) {

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webinar Generator · Meghan Eckenbach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&family=Playfair+Display:ital,wght@1,400;1,600;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mahogany: #2e0e02;
+      --pearl: #E9DFD3;
+      --chestnut: #8B271E;
+      --cream: #f5efe8;
+      --muted: #8a7a70;
+      --border: #d4c9bb;
+      --slide-bg: #130601;
+      --slide-text: #E9DFD3;
+      --slide-muted: rgba(233,223,211,0.55);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--pearl); color: var(--mahogany); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    /* NAV */
+    nav {
+      background: var(--mahogany);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      width: 32px; height: 32px;
+      background: var(--pearl);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700; font-size: 12px;
+      color: var(--mahogany);
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+    .nav-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600; font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--pearl);
+    }
+    .nav-title span { color: #c0847a; }
+    .nav-badge {
+      margin-left: auto;
+      background: rgba(233,223,211,0.12);
+      border: 1px solid rgba(233,223,211,0.2);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 11px;
+      color: var(--pearl);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: 'Oswald', sans-serif;
+    }
+
+    /* SCREENS */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* HERO */
+    #screen-hero { padding: 32px 20px 48px; max-width: 480px; margin: 0 auto; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(139,39,30,0.08);
+      border: 1px solid rgba(139,39,30,0.2);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--chestnut);
+      margin-bottom: 18px;
+    }
+    .hero-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1.0;
+      text-transform: uppercase;
+      color: var(--mahogany);
+      margin-bottom: 10px;
+    }
+    .hero-title span { color: var(--chestnut); }
+    .hero-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-family: 'Oswald', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--mahogany);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--chestnut); }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: #c0b4a8; }
+    .form-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+    .btn-primary {
+      width: 100%;
+      background: var(--mahogany);
+      color: var(--pearl);
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #1e0901; }
+    .error-msg {
+      display: none;
+      background: rgba(139,39,30,0.08);
+      border: 1px solid rgba(139,39,30,0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--chestnut);
+      margin-top: 12px;
+    }
+
+    /* LOADING */
+    #screen-loading { padding: 48px 20px; max-width: 480px; margin: 0 auto; text-align: center; }
+    .loading-context {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+    .loading-spinner {
+      width: 52px; height: 52px;
+      border: 3px solid var(--border);
+      border-top-color: var(--mahogany);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 28px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: 'Oswald', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--mahogany);
+      margin-bottom: 24px;
+      min-height: 28px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--mahogany);
+      border-radius: 999px;
+      transition: width 1.5s ease;
+      width: 0%;
+    }
+    .loading-steps { display: flex; justify-content: center; gap: 8px; }
+    .loading-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.4s;
+    }
+    .loading-dot.done { background: var(--mahogany); }
+    .loading-dot.active { background: var(--chestnut); animation: pulse 0.8s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* RESULTS */
+    #screen-results { padding: 24px 20px 60px; max-width: 480px; margin: 0 auto; }
+    .results-header { margin-bottom: 20px; }
+    .results-tag {
+      display: inline-block;
+      background: rgba(139,39,30,0.1);
+      border: 1px solid rgba(139,39,30,0.2);
+      border-radius: 999px;
+      padding: 3px 11px;
+      font-size: 11px;
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--chestnut);
+      margin-bottom: 10px;
+    }
+    .results-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      text-transform: uppercase;
+      color: var(--mahogany);
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+    .results-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+    .results-actions { display: flex; gap: 10px; margin-bottom: 28px; }
+    .btn-download {
+      flex: 1;
+      background: var(--mahogany);
+      color: var(--pearl);
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-present {
+      flex: 1;
+      background: #fff;
+      color: var(--mahogany);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-present:hover { border-color: var(--mahogany); }
+
+    /* SLIDE CAROUSEL */
+    .carousel-wrap { position: relative; margin-bottom: 16px; }
+    .carousel-track {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(46,14,2,0.18);
+    }
+    .slide-prev, .slide-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      color: var(--mahogany);
+      z-index: 10;
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .slide-prev { left: -16px; }
+    .slide-next { right: -16px; }
+    .slide-prev:hover, .slide-next:hover { background: #fff; }
+    .slide-counter {
+      text-align: center;
+      font-family: 'Oswald', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* SLIDE DESIGN */
+    .slide {
+      width: 100%; height: 100%;
+      background: var(--slide-bg);
+      color: var(--slide-text);
+      display: flex; flex-direction: column;
+      padding: 7% 8%;
+      position: relative;
+      overflow: hidden;
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 110% 110%, rgba(139,39,30,0.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .slide--cta::before {
+      background: radial-gradient(ellipse at 110% 110%, rgba(139,39,30,0.35) 0%, transparent 55%);
+    }
+    .slide--titel::before {
+      background: radial-gradient(ellipse at 50% 100%, rgba(139,39,30,0.22) 0%, transparent 60%);
+    }
+    .slide-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10%;
+      flex-shrink: 0;
+    }
+    .slide-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(8px, 1.5vw, 11px);
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #b36055;
+    }
+    .slide-num {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(8px, 1.4vw, 10px);
+      letter-spacing: 0.1em;
+      color: var(--slide-muted);
+    }
+    .slide-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-heading {
+      font-family: 'Playfair Display', 'Georgia', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: clamp(14px, 4vw, 28px);
+      line-height: 1.15;
+      color: var(--slide-text);
+      margin-bottom: 5%;
+    }
+    .slide--titel .slide-heading,
+    .slide--belofte .slide-heading,
+    .slide--stappen .slide-heading,
+    .slide--bewijs .slide-heading {
+      font-family: 'Oswald', sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: clamp(16px, 4.5vw, 32px);
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+    .slide--cta .slide-heading {
+      font-family: 'Oswald', sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: clamp(16px, 5vw, 34px);
+      color: var(--pearl);
+    }
+    .slide-text {
+      font-size: clamp(9px, 2vw, 14px);
+      line-height: 1.6;
+      color: var(--slide-muted);
+      max-width: 80%;
+    }
+    .slide--titel .slide-text {
+      color: rgba(233,223,211,0.65);
+      font-style: italic;
+      max-width: 90%;
+    }
+    .slide-punten {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5%;
+    }
+    .slide-punten li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: clamp(9px, 2.2vw, 15px);
+      color: var(--slide-text);
+      line-height: 1.4;
+    }
+    .slide-punten li::before {
+      content: '–';
+      color: #b36055;
+      flex-shrink: 0;
+      font-family: 'Oswald', sans-serif;
+      margin-top: 0.05em;
+    }
+    .slide--belofte .slide-punten li::before,
+    .slide--stappen .slide-punten li::before { content: '→'; }
+    .slide--bewijs .slide-punten li::before { content: '✓'; color: #6aaa7a; }
+
+    /* SPEAKER NOTES */
+    .notes-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .notes-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .notes-text { font-size: 13px; color: var(--mahogany); line-height: 1.65; }
+
+    /* FULLSCREEN OVERLAY */
+    #presentation-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 1000;
+      flex-direction: column;
+    }
+    #presentation-overlay.open { display: flex; }
+    #pres-slide-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      overflow: hidden;
+    }
+    #pres-slide-inner {
+      width: 100%;
+      max-height: 100%;
+      aspect-ratio: 16/9;
+    }
+    #pres-slide-inner .slide { border-radius: 0; }
+    .pres-controls {
+      height: 52px;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+    .pres-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.07em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .pres-btn:hover { background: rgba(255,255,255,0.18); }
+    #pres-counter {
+      font-family: 'Oswald', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.6);
+      min-width: 60px;
+      text-align: center;
+    }
+    .pres-close {
+      margin-left: auto;
+      background: rgba(139,39,30,0.4);
+      border: 1px solid rgba(139,39,30,0.5);
+      color: var(--pearl);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: 'Oswald', sans-serif;
+      cursor: pointer;
+      letter-spacing: 0.07em;
+    }
+    .pres-close:hover { background: rgba(139,39,30,0.65); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.35s ease both; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">ME</div>
+  <div class="nav-title">Meghan <span>Eckenbach</span></div>
+  <div class="nav-badge">Webinar Generator</div>
+</nav>
+
+<!-- SCREEN 1: FORM -->
+<div id="screen-hero" class="screen active">
+  <div class="hero-eyebrow">✦ Nieuw</div>
+  <h1 class="hero-title">Genereer je<br><span>complete webinar</span></h1>
+  <p class="hero-sub">Geef je onderwerp op en ontvang binnen 60 seconden 12 kant-en-klare slides in de "3 fouten" stijl — inclusief sprekernotities.</p>
+
+  <div class="form-group">
+    <label>Webinar onderwerp *</label>
+    <input id="f-onderwerp" placeholder="bijv. meer klanten via Instagram" required>
+  </div>
+  <div class="form-group">
+    <label>Voor wie is de webinar? *</label>
+    <input id="f-doelgroep" placeholder="bijv. coaches en therapeuten" required>
+  </div>
+  <div class="form-group">
+    <label>Grote transformatie *</label>
+    <textarea id="f-transformatie" placeholder="Wat kan de deelnemer na de webinar doen of bereiken?" required></textarea>
+  </div>
+  <div class="form-group">
+    <label>Jouw naam (voor de slides)</label>
+    <input id="f-naam" placeholder="bijv. Meghan">
+  </div>
+  <hr class="form-divider">
+  <div class="form-group">
+    <label>E-mailadres *</label>
+    <input id="f-email" type="email" placeholder="jij@voorbeeld.nl" required>
+  </div>
+
+  <button class="btn-primary" onclick="startWebinar()">Genereer mijn webinar →</button>
+  <div class="error-msg" id="error-msg"></div>
+</div>
+
+<!-- SCREEN 2: LOADING -->
+<div id="screen-loading" class="screen">
+  <div class="loading-context" id="loading-context">
+    <span>⚙</span> <span id="loading-ctx-text">Bezig…</span>
+  </div>
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text">We bedenken je webinar structuur…</div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="loading-steps" id="loading-steps">
+    <div class="loading-dot active" data-i="0"></div>
+    <div class="loading-dot" data-i="1"></div>
+    <div class="loading-dot" data-i="2"></div>
+    <div class="loading-dot" data-i="3"></div>
+    <div class="loading-dot" data-i="4"></div>
+  </div>
+</div>
+
+<!-- SCREEN 3: RESULTS -->
+<div id="screen-results" class="screen">
+  <div class="results-header">
+    <div class="results-tag">✓ Gegenereerd</div>
+    <h2 class="results-title" id="results-webinar-title">Jouw webinar</h2>
+    <p class="results-subtitle" id="results-webinar-sub"></p>
+    <div class="results-actions">
+      <button class="btn-download" onclick="downloadPresentation()">↓ Download slides</button>
+      <button class="btn-present" onclick="openPresentation()">▶ Presenteer</button>
+    </div>
+  </div>
+
+  <div class="carousel-wrap">
+    <button class="slide-prev" onclick="prevSlide()">&#8249;</button>
+    <div class="carousel-track" id="carousel-track"></div>
+    <button class="slide-next" onclick="nextSlide()">&#8250;</button>
+  </div>
+  <div class="slide-counter" id="slide-counter">1 / 12</div>
+
+  <div class="notes-card">
+    <div class="notes-label">Sprekernotitie</div>
+    <div class="notes-text" id="notes-text">—</div>
+  </div>
+</div>
+
+<!-- FULLSCREEN PRESENTATION -->
+<div id="presentation-overlay">
+  <div id="pres-slide-wrap">
+    <div id="pres-slide-inner"></div>
+  </div>
+  <div class="pres-controls">
+    <button class="pres-btn" onclick="presNav(-1)">&#8592; Vorige</button>
+    <span id="pres-counter">1 / 12</span>
+    <button class="pres-btn" onclick="presNav(1)">Volgende &#8594;</button>
+    <button class="pres-close" onclick="closePresentation()">&#10005; Sluiten</button>
+  </div>
+</div>
+
+<script>
+  let webinarData = null;
+  let currentSlide = 0;
+  let presSlide = 0;
+  let apiDone = false;
+  let loadDone = false;
+
+  const LOADING_STEPS = [
+    { text: 'We bedenken je webinar structuur…', pct: '15%' },
+    { text: 'We schrijven de 3 fouten…', pct: '35%' },
+    { text: 'We voegen slide content toe…', pct: '55%' },
+    { text: 'We schrijven sprekernotities…', pct: '75%' },
+    { text: 'We bouwen je presentatie…', pct: '90%' },
+  ];
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function startWebinar() {
+    const onderwerp = document.getElementById('f-onderwerp').value.trim();
+    const doelgroep = document.getElementById('f-doelgroep').value.trim();
+    const transformatie = document.getElementById('f-transformatie').value.trim();
+    const naam = document.getElementById('f-naam').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+
+    document.getElementById('error-msg').style.display = 'none';
+
+    if (!onderwerp) return showError('Vul het webinar onderwerp in.');
+    if (!doelgroep) return showError('Voor wie is de webinar?');
+    if (!transformatie) return showError('Wat is de grote transformatie?');
+    if (!email || !email.includes('@')) return showError('Vul een geldig e-mailadres in.');
+
+    document.getElementById('loading-ctx-text').textContent = onderwerp;
+    showScreen('screen-loading');
+
+    apiDone = false;
+    loadDone = false;
+    runLoadingSequence();
+    generateWebinar(onderwerp, doelgroep, transformatie, naam, email);
+
+    // Fire-and-forget subscribe
+    fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'subscribe', email, instagram: '' })
+    }).catch(() => {});
+  }
+
+  function runLoadingSequence() {
+    let step = 0;
+    const textEl = document.getElementById('loading-text');
+    const fillEl = document.getElementById('progress-fill');
+    const dots = document.querySelectorAll('.loading-dot');
+
+    function advance() {
+      if (step >= LOADING_STEPS.length) return;
+      const s = LOADING_STEPS[step];
+      textEl.textContent = s.text;
+      fillEl.style.width = s.pct;
+      dots.forEach((d, i) => {
+        d.className = 'loading-dot' + (i < step ? ' done' : i === step ? ' active' : '');
+      });
+      step++;
+      if (step < LOADING_STEPS.length) setTimeout(advance, 2200);
+    }
+    advance();
+
+    const checkInterval = setInterval(() => {
+      if (apiDone) {
+        clearInterval(checkInterval);
+        loadDone = true;
+        textEl.textContent = 'Jouw webinar is klaar!';
+        fillEl.style.width = '100%';
+        dots.forEach(d => d.className = 'loading-dot done');
+        setTimeout(() => { if (webinarData) renderResults(webinarData); }, 400);
+      }
+    }, 200);
+  }
+
+  async function generateWebinar(onderwerp, doelgroep, transformatie, naam, email) {
+    try {
+      const res = await fetch('/api/claude', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'generate_webinar', onderwerp, doelgroep, transformatie, naam })
+      });
+
+      if (!res.ok) throw new Error('API fout');
+
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+
+      webinarData = data;
+      apiDone = true;
+    } catch (e) {
+      showScreen('screen-hero');
+      showError('Er is iets misgegaan. Probeer het opnieuw.');
+    }
+  }
+
+  function renderResults(data) {
+    document.getElementById('results-webinar-title').textContent = data.webinar_titel || 'Jouw webinar';
+    document.getElementById('results-webinar-sub').textContent = data.ondertitel || '';
+    showScreen('screen-results');
+    goToSlide(0);
+  }
+
+  function buildSlideHTML(slide, i, total) {
+    const label = slide.label ? `<span class="slide-label">${esc(slide.label)}</span>` : '<span></span>';
+    const numEl = `<span class="slide-num">${i + 1} / ${total}</span>`;
+
+    let bodyContent = `<h2 class="slide-heading">${esc(slide.koptekst)}</h2>`;
+    if (slide.tekst) bodyContent += `<p class="slide-text">${esc(slide.tekst)}</p>`;
+    if (slide.punten && slide.punten.length) {
+      bodyContent += '<ul class="slide-punten">' + slide.punten.map(p => `<li>${esc(p)}</li>`).join('') + '</ul>';
+    }
+
+    return `<div class="slide slide--${esc(slide.type)}">
+      <div class="slide-meta">${label}${numEl}</div>
+      <div class="slide-body">${bodyContent}</div>
+    </div>`;
+  }
+
+  function goToSlide(index) {
+    if (!webinarData || !webinarData.slides) return;
+    const slides = webinarData.slides;
+    currentSlide = Math.max(0, Math.min(index, slides.length - 1));
+    const slide = slides[currentSlide];
+
+    document.getElementById('carousel-track').innerHTML = buildSlideHTML(slide, currentSlide, slides.length);
+    document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${slides.length}`;
+    document.getElementById('notes-text').textContent = slide.notitie || '—';
+  }
+
+  function prevSlide() { goToSlide(currentSlide - 1); }
+  function nextSlide() { goToSlide(currentSlide + 1); }
+
+  // Keyboard nav on results screen
+  document.addEventListener('keydown', (e) => {
+    if (document.getElementById('presentation-overlay').classList.contains('open')) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') presNav(-1);
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); presNav(1); }
+      if (e.key === 'Escape') closePresentation();
+    } else if (document.getElementById('screen-results').classList.contains('active')) {
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'ArrowRight') nextSlide();
+    }
+  });
+
+  /* FULLSCREEN PRESENTATION */
+  function openPresentation() {
+    presSlide = currentSlide;
+    document.getElementById('presentation-overlay').classList.add('open');
+    renderPresSlide();
+  }
+
+  function closePresentation() {
+    document.getElementById('presentation-overlay').classList.remove('open');
+  }
+
+  function presNav(dir) {
+    if (!webinarData) return;
+    presSlide = Math.max(0, Math.min(presSlide + dir, webinarData.slides.length - 1));
+    renderPresSlide();
+  }
+
+  function renderPresSlide() {
+    const slides = webinarData.slides;
+    const slide = slides[presSlide];
+    document.getElementById('pres-slide-inner').innerHTML = buildSlideHTML(slide, presSlide, slides.length);
+    document.getElementById('pres-counter').textContent = `${presSlide + 1} / ${slides.length}`;
+  }
+
+  /* DOWNLOAD */
+  function downloadPresentation() {
+    if (!webinarData) return;
+    const html = generatePresentationHTML(webinarData);
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const slug = (webinarData.webinar_titel || 'webinar').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
+    a.download = slug + '.html';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  function generatePresentationHTML(data) {
+    const slides = data.slides || [];
+    const slidesJSON = JSON.stringify(slides);
+
+    return `<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${escHTML(data.webinar_titel || 'Webinar')}</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Playfair+Display:ital,wght@1,400;1,700&family=DM+Sans:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#000;overflow:hidden}
+#stage{width:100vw;height:100vh;display:flex;flex-direction:column}
+#slide-area{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#slide-frame{width:100%;aspect-ratio:16/9;max-height:100%}
+.slide{width:100%;height:100%;background:#130601;color:#E9DFD3;display:flex;flex-direction:column;padding:7% 8%;position:relative;overflow:hidden}
+.slide::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 110% 110%,rgba(139,39,30,0.18) 0%,transparent 60%);pointer-events:none}
+.slide--cta::before{background:radial-gradient(ellipse at 110% 110%,rgba(139,39,30,0.35) 0%,transparent 55%)}
+.slide--titel::before{background:radial-gradient(ellipse at 50% 100%,rgba(139,39,30,0.22) 0%,transparent 60%)}
+.slide-meta{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10%;flex-shrink:0}
+.slide-label{font-family:'Oswald',sans-serif;font-size:clamp(9px,1.5vw,13px);font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:#b36055}
+.slide-num{font-family:'Oswald',sans-serif;font-size:clamp(8px,1.2vw,11px);letter-spacing:0.1em;color:rgba(233,223,211,0.45)}
+.slide-body{flex:1;display:flex;flex-direction:column;justify-content:center}
+.slide-heading{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:clamp(18px,4.5vw,52px);line-height:1.1;color:#E9DFD3;margin-bottom:5%}
+.slide--titel .slide-heading,.slide--belofte .slide-heading,.slide--stappen .slide-heading,.slide--bewijs .slide-heading,.slide--overzicht .slide-heading{font-family:'Oswald',sans-serif;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.01em;font-size:clamp(20px,5vw,58px)}
+.slide--cta .slide-heading{font-family:'Oswald',sans-serif;font-style:normal;font-weight:700;text-transform:uppercase;font-size:clamp(22px,5.5vw,62px)}
+.slide-text{font-size:clamp(11px,2vw,22px);line-height:1.6;color:rgba(233,223,211,0.6);max-width:80%}
+.slide--titel .slide-text{color:rgba(233,223,211,0.55);font-style:italic;max-width:90%}
+.slide-punten{list-style:none;display:flex;flex-direction:column;gap:3%}
+.slide-punten li{display:flex;align-items:flex-start;gap:10px;font-size:clamp(12px,2.5vw,26px);color:#E9DFD3;line-height:1.35}
+.slide-punten li::before{content:'–';color:#b36055;flex-shrink:0;font-family:'Oswald',sans-serif}
+.slide--belofte .slide-punten li::before,.slide--stappen .slide-punten li::before{content:'→'}
+.slide--bewijs .slide-punten li::before{content:'✓';color:#6aaa7a}
+#controls{height:52px;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;gap:16px;padding:0 20px;flex-shrink:0}
+.ctrl-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;border-radius:8px;padding:7px 20px;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:0.07em;cursor:pointer;transition:background 0.2s}
+.ctrl-btn:hover{background:rgba(255,255,255,0.2)}
+#counter{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:0.1em;color:rgba(255,255,255,0.5);min-width:70px;text-align:center}
+.notes-panel{display:none;position:fixed;bottom:52px;left:0;right:0;background:rgba(0,0,0,0.92);border-top:1px solid rgba(255,255,255,0.1);padding:14px 24px;color:rgba(255,255,255,0.75);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.6;max-height:30vh;overflow-y:auto}
+.notes-panel.open{display:block}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="slide-area"><div id="slide-frame"></div></div>
+  <div id="controls">
+    <button class="ctrl-btn" onclick="nav(-1)">&#8592; Vorige</button>
+    <span id="counter">1 / ${slides.length}</span>
+    <button class="ctrl-btn" onclick="nav(1)">Volgende &#8594;</button>
+    <button class="ctrl-btn" onclick="toggleNotes()" style="margin-left:8px">Notities</button>
+  </div>
+</div>
+<div class="notes-panel" id="notes-panel"></div>
+<script>
+var slides=${slidesJSON};
+var cur=0;
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function render(){
+  var s=slides[cur],total=slides.length;
+  var label=s.label?'<span class="slide-label">'+esc(s.label)+'</span>':'<span></span>';
+  var body='<h2 class="slide-heading">'+esc(s.koptekst)+'</h2>';
+  if(s.tekst)body+='<p class="slide-text">'+esc(s.tekst)+'</p>';
+  if(s.punten&&s.punten.length)body+='<ul class="slide-punten">'+s.punten.map(function(p){return'<li>'+esc(p)+'</li>'}).join('')+'</ul>';
+  document.getElementById('slide-frame').innerHTML='<div class="slide slide--'+esc(s.type)+'"><div class="slide-meta">'+label+'<span class="slide-num">'+(cur+1)+' / '+total+'</span></div><div class="slide-body">'+body+'</div></div>';
+  document.getElementById('counter').textContent=(cur+1)+' / '+total;
+  document.getElementById('notes-panel').textContent=s.notitie||'';
+}
+function nav(d){cur=Math.max(0,Math.min(cur+d,slides.length-1));render()}
+function toggleNotes(){document.getElementById('notes-panel').classList.toggle('open')}
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')nav(-1);
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();nav(1)}
+  if(e.key==='n'||e.key==='N')toggleNotes();
+});
+render();
+<\/script>
+</body></html>`;
+  }
+
+  function esc(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function escHTML(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+</script>
+</body>
+</html>
